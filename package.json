@@ -1,0 +1,19 @@
+{
+  "name": "shrekbot",
+  "version": "1.0.0",
+  "description": "A discord bot for learning and trolling purposes",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+  },
+  "author": "AccelMR",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.5.3",
+    "discord.js": "^12.5.3",
+    "fs": "0.0.1-security",
+    "fs-extra": "^10.0.0",
+    "lnk": "^1.1.0"
+  }
+}
