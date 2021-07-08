@@ -48,7 +48,7 @@ export default class ShrekBot {
      * @member   {JSON} Sounds
      * @memberof shrekBot
      */
-    this.m_soundsJson = null;
+    this.m_soundsData = null;
 
     /**
      * Emoji Map.
@@ -58,7 +58,17 @@ export default class ShrekBot {
      * @member   {JSON} EmojiMap
      * @memberof shrekBot
      */
-    this.m_emojiMap = null;
+    this.m_emojiData = null;
+
+    /**
+     * Resource Manager that saves all the json's in resources/additional/   Path.
+     *
+     * @access private
+     *
+     * @member   {Object} m_resourceManager
+     * @memberof shrekBot
+     */
+    this.m_resourceManager = null;
 
     /**
      * How many times evens have laoded.
@@ -73,7 +83,7 @@ export default class ShrekBot {
     /**
      * How many times commands have loaded.
      *
-     * @access `private`
+     * @access private
      *
      * @member   {int} m_commandReloadI
      * @memberof shrekBot
@@ -95,11 +105,11 @@ export default class ShrekBot {
   initialize() {
     //Create discord Client 
     this.m_bot = new Discord.Client();
-    
+
     //Load Config Data
     this._loadConfig();
     //Load any other resource needed
-    this._loadResourceData();
+    this.loadResourceManagerData();
 
     //Load commands and events for the first time
     this._loadEvents();
@@ -158,15 +168,15 @@ export default class ShrekBot {
     log(`Loaded commands.`);
   }
 
-    /**
-   * Summary. Load all events.
-   * 
-   * Description. If events are loaded already, It'll create a symlink to events to reload them
-   *
-   * @access  private
-   * 
-   * @return {void} 
-   */
+  /**
+ * Summary. Load all events.
+ * 
+ * Description. If events are loaded already, It'll create a symlink to events to reload them
+ *
+ * @access  private
+ * 
+ * @return {void} 
+ */
   _loadEvents() {
     var _this = this;
     this.m_bot.removeAllListeners();
@@ -208,28 +218,54 @@ export default class ShrekBot {
    * 
    * @return {void} 
    */
-  _loadConfig(){
+  _loadConfig() {
     this.m_config = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/config.json"), 'utf8', 'utf8'));
     log("Load Config File.")
   }
-  
+
   /**
    * Summary. Loads any other resource data.
    *
-   * @access  private
+   * @access  public
    * 
    * @return {void} 
    */
-  _loadResourceData(){
-    this.m_soundsJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/sounds.json"), 'utf8', 'utf8'));
-    log("Load Sound File.")
-    this.m_emojiMap = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../resources/emojimap.json"), 'utf8', 'utf8'));
-    log("Load EmojiMap.")
+  loadResourceManagerData() {
+    var _this = this;
+
+    fs.readdir("./resources/additional/", (_err, _files) => {
+      if (_err) return error(_err);
+
+      _this.m_resourceManager = new Object();
+      _files.forEach(file => {
+        let fileName = file.substr(0, file.lastIndexOf('.'));
+
+        _this.m_resourceManager[fileName] = JSON.parse(fs.readFileSync(
+          path.resolve(__dirname, `../resources/additional/${file}`), 'utf8', 'utf8'));
+        log(`Load ${file} in Resource Manager`)
+      });
+    });
   }
 
   /**************************************************************************************************/
   /*                                      Getters																										*/
   /**************************************************************************************************/
+
+  /**
+   * Summary. returns the data loaded from json's in resources.
+   *
+   * @access  public
+   * 
+   * @return {JSON} The Data loaded from given name. Null if name does not exist
+   */
+  getJSON(_name) {
+    if (_name in this.m_resourceManager) {
+      return this.m_resourceManager[_name];
+    }
+
+    error(`Theres no ${_name} in Rrsource Manager.`)
+    return null;
+  }
 
   get Config() {
     return this.m_config;
@@ -237,14 +273,6 @@ export default class ShrekBot {
 
   get Bot() {
     return this.m_bot;
-  }
-
-  get JSONSounds() {
-    return this.m_soundsJson;
-  }
-
-  get EmojiMap() {
-    return this.m_emojiMap;
   }
 
 

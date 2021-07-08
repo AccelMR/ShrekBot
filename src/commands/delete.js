@@ -17,13 +17,13 @@ export const run = (_client, _message, _args) => {
   let messageToDelete = _getInteger(toDelete, 1);
   messageToDelete = messageToDelete >= 100 ? 99 : messageToDelete;
 
-  clear(messageToDelete);
+  clear(messageToDelete, channel);
   log(`${userName} deleted ${messageToDelete} messages.`)
 }
 
 
 //async funtion to delete the messages
-async function clear(_toDelete) {
-  const fetched = await channel.messages.fetch({ limit: _toDelete });
-  channel.bulkDelete(fetched);
+async function clear(_toDelete, _channel) {
+  const fetched = await _channel.messages.fetch({ limit: _toDelete });
+  _channel.bulkDelete(fetched);
 }

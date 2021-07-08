@@ -7,10 +7,13 @@ export const event = (_client, _message) => {
   if (_message.author.bot) return;
 
   // Ignore messages not starting with the prefix (in config.json)
-  if (_message.content.indexOf(Config.Prefix) !== 0) return;
+  if (_message.content.indexOf(Config.Prefix) !== 0 || _message.content === ".") return;
 
   // Our standard argument/command name definition.
   const args = _message.content.slice(Config.Prefix.length).trim().match(/(?:[^\s"]+|"[^"]*")+/g);
+  for (let i = 0; i < args.length; i++) {
+    args[i] = args[i].toString().replace(/"/g, '');
+  }
   const command = args.shift().toLowerCase();
 
   // Grab the command data from the client.commands Enmap

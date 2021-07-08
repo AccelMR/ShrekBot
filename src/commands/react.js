@@ -40,7 +40,7 @@ export const run = (_client, _message, _args) => {
           _messages.map((function (_msg, _indx, _array) {
             if (i === ToReact) {
               //Calls async funtion so it can react in the proper order
-              MessageReact(_msg, _client.EmojiMap, _args[0]);
+              MessageReact(_msg, _client.getJSON("emojimap"), _args[0]);
             }
             i++;
           }))
