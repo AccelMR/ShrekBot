@@ -4,13 +4,13 @@ export const Triggers = ['delete', 'borrar']
 
 //Delete a number od messages in command channel
 export const run = (_client, _message, _args) => {
-  //Delete this command
-  _message.delete();
-
   //Get username of the one who calle this command
   let userName = _message.author.username;
   //Get channel
   var channel = _message.channel;
+
+  //Delete this command
+  _message.delete();
 
   //Calculate how many messages this is going to delete
   let toDelete = (!_args || _args.length === 0) ? 1 : _args[0];

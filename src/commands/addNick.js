@@ -11,13 +11,15 @@ const __dirname = path.dirname(__filename);
 export const Triggers = ['addnick', 'newnick']
 
 export const run = (_client, _message, _args) => {
+  let Channel = _message.channel;
+
   //Delete this command
   _message.delete();
 
   //If not arguments were send
   if (!_args || _args.length !== 2) {
     let message = `I didn't even get arguments, noob.`;
-    _message.channel.send(message);
+    Channel.send(message);
     log('No args were send');
     return;
   }
@@ -30,7 +32,7 @@ export const run = (_client, _message, _args) => {
   //If nick already exist then it'll return
   if (Nick in NicksData) {
     let message = `${Nick} exists already in the nicks for ${NicksData[Nick]}`;
-    _message.channel.send(message);
+    Channel.send(message);
     log(message);
     return;
   }

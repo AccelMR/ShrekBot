@@ -61,27 +61,29 @@ export const _getInteger = (_stringVal, _default = 0) => {
  */
 export const getMemberByName = (_name, _client, _members) => {
   let NicksData = _client.getJSON("nicks");
-  let MemberRealName = _name;
+  let MemberRealName = "";
   let Member = null;
 
+  //TODO probably this function can be reduce and optimized
   if (NicksData) {
     /**
      * Try to find real username by nick, if it does not find it, could be that 
      * name sent is actually the real name, so it'll look for it in the nick values
      * if it could not be find then returns from this func 
      */
-    if (!(_name in NicksData)) {
+    if (_name in NicksData) {
+      //Get real name and then looks for the actual memeber with realName
+      MemberRealName = NicksData[_name];
+    }
+    else {
       let Values = Object.values(NicksData);
       if (_name in Values) {
         MemberRealName = Object.keys(NicksData)[Object.values(NicksData).indexOf(_name)];
       }
     }
-
-    //Get real name and then looks for the actual memeber with realName
-    MemberRealName = MemberRealName === _name ? NicksData[_name] : MemberRealName;
   }
 
-
+  MemberRealName = MemberRealName === "" ? _name : MemberRealName;
   Member = _members.find(member => member.user.username.toLowerCase() === MemberRealName.toLowerCase());
   if (!Member) { error("Member couldn't be find."); }
 

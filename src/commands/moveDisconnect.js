@@ -4,17 +4,23 @@ import { error, getChannelByName, log, getMemberByName } from "../Helpers.js"
 export const Triggers = ['m', 'move', 'd', 'disconnect']
 
 export const run = (_client, _message, _args) => {
+  //Get all members in this guild
+  let Guild = _message.guild;
+  let MemberManager = Guild.members;
+  let Members = MemberManager.cache;
+  let AuthorName = _message.author.username;
+
   //Delete this command
   _message.delete();
 
-  //Get all members in this guild
-  let MemberManager = _message.guild.members;
-  let Members = MemberManager.cache;
 
+  if (typeof _args[0] === 'undefined') { return error("No srgs sent"); }
+  
   //Parse args
   let MemberNick = _args[0].toLowerCase();
   let ChannelName = typeof _args[1] === 'undefined' ? "" : _args[1].toLowerCase();
 
+  //Look for that member
   let Member = getMemberByName(MemberNick, _client, Members);
   if (!Member) return;
 
@@ -22,12 +28,15 @@ export const run = (_client, _message, _args) => {
   let VoiceConnection = Member.voice;
   if (!VoiceConnection) return error("Player is not connected to any channel.");
 
-
-  let ChannelToMove = getChannelByName(ChannelName, _message.guild);
+  /**
+   * Look for channel, it doens't matter if channel = null, that only means that the person is
+   * going to be disconnected 
+   * */
+  let ChannelToMove = getChannelByName(ChannelName, Guild);
 
   //Actual command
   VoiceConnection.setChannel(ChannelToMove);
 
   let moveDisconect = ChannelToMove === null ? "disconnected" : "moved";
-  log(`${_message.author.username} has ${moveDisconect} ${Member.user.username}`);
+  log(`${AuthorName} has ${moveDisconect} ${Member.user.username} to ${ChannelName}`);
 }
