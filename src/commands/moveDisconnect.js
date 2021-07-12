@@ -5,20 +5,19 @@ export const Triggers = ['m', 'move', 'd', 'disconnect']
 
 export const run = (_client, _message, _args) => {
   //Get all members in this guild
-  let Guild = _message.guild;
-  let MemberManager = Guild.members;
-  let Members = MemberManager.cache;
-  let AuthorName = _message.author.username;
+  const Guild = _message.guild;
+  const MemberManager = Guild.members;
+  const Members = MemberManager.cache;
+  const AuthorName = _message.author.username;
 
   //Delete this command
   _message.delete();
 
-
   if (typeof _args[0] === 'undefined') { return error("No srgs sent"); }
   
   //Parse args
-  let MemberNick = _args[0].toLowerCase();
-  let ChannelName = typeof _args[1] === 'undefined' ? "" : _args[1].toLowerCase();
+  const MemberNick = _args[0].toLowerCase();
+  const ChannelName = typeof _args[1] === 'undefined' ? "" : _args[1].toLowerCase();
 
   //Look for that member
   let Member = getMemberByName(MemberNick, _client, Members);

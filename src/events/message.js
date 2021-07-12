@@ -1,10 +1,36 @@
+import { log } from "../Helpers.js";
 
 //When any message is recieved this gets called
 export const event = (_client, _message) => {
-  let Bot = _client.Bot;
-  let Config = _client.Config;
+  const Bot = _client.Bot;
+  const Config = _client.Config;
+  const Channel = _message.channel;
+
   // Ignore all bots
   if (_message.author.bot) return;
+
+  /**
+   * check if it has mentioned the bot
+   */
+  const Mentions = _message.mentions;
+  if (Mentions.has(_client.Bot.user)) {
+    const BotVoice = _message.guild.voice;
+    if (!BotVoice) {
+      return Channel.send("No esté chiflando ahorita, caramba!")
+    }
+
+    const VoiceConnection = BotVoice.connection;
+    if (!VoiceConnection) {
+      return Channel.send("No esté chiflando ahorita, caramba!")
+    }
+
+    VoiceConnection.play(_client.Config.SoundsPath +  "noEsteChflando.mp3");
+  }
+
+
+  /* *********************************************************************** */
+  /*                              Commands                            
+  /* *********************************************************************** */
 
   // Ignore messages not starting with the prefix (in config.json)
   if (_message.content.indexOf(Config.Prefix) !== 0 || _message.content === ".") return;

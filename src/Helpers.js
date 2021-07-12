@@ -60,7 +60,8 @@ export const _getInteger = (_stringVal, _default = 0) => {
  * @return {Guildmember} Guild member found by name. Null of no member was find
  */
 export const getMemberByName = (_name, _client, _members) => {
-  let NicksData = _client.getJSON("nicks");
+  const NicksData = _client.getJSON("nicks");
+
   let MemberRealName = "";
   let Member = null;
 
@@ -76,7 +77,7 @@ export const getMemberByName = (_name, _client, _members) => {
       MemberRealName = NicksData[_name];
     }
     else {
-      let Values = Object.values(NicksData);
+      const Values = Object.values(NicksData);
       if (_name in Values) {
         MemberRealName = Object.keys(NicksData)[Object.values(NicksData).indexOf(_name)];
       }
@@ -85,7 +86,7 @@ export const getMemberByName = (_name, _client, _members) => {
 
   MemberRealName = MemberRealName === "" ? _name : MemberRealName;
   Member = _members.find(member => member.user.username.toLowerCase() === MemberRealName.toLowerCase());
-  if (!Member) { error("Member couldn't be find."); }
+  if (!Member) { error(`Member ${_name} couldn't be find.`); }
 
   return Member;
 }

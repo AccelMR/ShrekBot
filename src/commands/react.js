@@ -26,7 +26,10 @@ export const run = (_client, _message, _args) => {
    */
   _message.delete()
     .then(response => {
+      if (typeof _args[0] === "undefined") { return error("No word send"); }
+
       //Get the index message that want to react
+      var WordToReact = _args[0].toLowerCase();
       var ToReact = (!_args || _args.length === 0) ? 1 : _getInteger(_args[1], 1);
       ToReact -= 1;
 
@@ -40,7 +43,7 @@ export const run = (_client, _message, _args) => {
           _messages.map((function (_msg, _indx, _array) {
             if (i === ToReact) {
               //Calls async funtion so it can react in the proper order
-              MessageReact(_msg, _client.getJSON("emojimap"), _args[0]);
+              MessageReact(_msg, _client.getJSON("emojimap"), WordToReact);
             }
             i++;
           }))
