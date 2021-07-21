@@ -1,19 +1,30 @@
 {
   "name": "shrekbot",
   "version": "1.0.0",
-  "description": "A discord bot for learning and trolling purposes",
+  "description": "Shrek bot is a bot made for learning and trolly purposes. It also will grow up to a useful bot eventually. ",
   "main": "main.js",
-  "type": "module",
   "scripts": {
-    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "AccelMR",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AccelMR/ShrekBot.git"
+  },
+  "author": "AccelMR <accel.mr@gmail.com>",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AccelMR/ShrekBot/issues"
+  },
+  "homepage": "https://github.com/AccelMR/ShrekBot#readme",
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
-    "discord.js": "^12.5.3",
-    "fs": "0.0.1-security",
-    "fs-extra": "^10.0.0",
-    "lnk": "^1.1.0"
+    "@types/fs-extra": "^9.0.12",
+    "discord.js": "^12.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^16.3.3",
+    "decache": "^4.6.0",
+    "dotenv": "^10.0.0",
+    "typescript": "^4.3.5"
   }
 }
