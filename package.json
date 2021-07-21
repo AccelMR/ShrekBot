@@ -1,7 +1,7 @@
 {
   "name": "shrekbot",
   "version": "1.0.0",
-  "description": "Shrek bot is a bot made for learning and trolly purposes. It also will grow up to a useful bot eventually. ",
+  "description": "Shrek bot is a bot made for learning and trolly purposes.",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
