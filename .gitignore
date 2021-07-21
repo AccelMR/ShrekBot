@@ -145,8 +145,8 @@ yarn.lock
 *.prettierrc
 
 #nicks
-nicks.json
-sounds.json
+**/nicks.*
+**/sounds.*
 
 #vs code
 .vscode/*

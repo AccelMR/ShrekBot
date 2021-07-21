@@ -85,17 +85,17 @@ export function getChannelByName(
   _guild: Guild
 ): GuildChannel {
   //Find Channel by name, if no Channel is found or no channel was send then it'll return null
-  let ChannelToMove: GuildChannel = null;
+  let FoundChannel: GuildChannel = null;
 
   if (_channelName !== "") {
     let GuildChannelManager = _guild.channels;
-    ChannelToMove = GuildChannelManager.cache.find(
+    FoundChannel = GuildChannelManager.cache.find(
       (Channel) => Channel.name.toLowerCase() === _channelName
     );
-    if (ChannelToMove === undefined) {
-      ChannelToMove = null;
+    if (FoundChannel === undefined) {
+      FoundChannel = null;
     }
   }
 
-  return ChannelToMove;
+  return FoundChannel;
 }
