@@ -30,6 +30,8 @@ In order to use Sounds you'll need to add in sound.json the Discord name of the 
 ## Installation
 In order to use this bot you'll need to create a bot in Discord API and create a .env file to save the TOKEN
 
-> npm install
-> npx tsc
-> node dist/src/main.js
+```
+ npm install
+ npx tsc
+ node dist/src/main.js
+```
