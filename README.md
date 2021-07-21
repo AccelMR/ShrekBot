@@ -18,6 +18,7 @@ Some of the commands you can find would be:
   
   - React with a word to a message. **See resources/emojimao.json
   > .react <word!>.
+  
   ![alt text](https://github.com/AccelMR/ShrekBot/blob/master/examples/react.jpg?raw=true)
   
   - Add nicks to users so you don't have to write their actual Discord names.
