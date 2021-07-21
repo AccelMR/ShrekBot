@@ -146,6 +146,7 @@ yarn.lock
 
 #nicks
 nicks.json
+sounds.json
 
 #vs code
 .vscode/*
