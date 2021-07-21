@@ -153,7 +153,7 @@ export class ShrekBot {
     }
 
     const message = `Theres no ${_name} in Resource Manager.`;
-    error(message);
+    log(message);
     return { ["error"]: message };
   }
 

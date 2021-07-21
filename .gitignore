@@ -147,6 +147,7 @@ yarn.lock
 #nicks
 **/nicks.*
 **/sounds.*
+**/discWhitelist.*
 
 #vs code
 .vscode/*

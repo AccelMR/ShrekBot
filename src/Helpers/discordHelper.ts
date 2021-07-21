@@ -34,7 +34,7 @@ export function getMemberByName(
 ): GuildMember {
   const NicksData: Record<string, any> = _client.getJSON("nicks");
 
-  let MemberRealName: string;
+  let MemberRealName: string = "";
   let Member: GuildMember = null;
 
   //TODO probably this function can be reduce and optimized
@@ -61,9 +61,6 @@ export function getMemberByName(
     (member) =>
       member.user.username.toLowerCase() === MemberRealName.toLowerCase()
   );
-  if (!Member) {
-    error(`Member ${_name} couldn't be find.`);
-  }
 
   return Member;
 }
