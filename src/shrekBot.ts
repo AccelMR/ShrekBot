@@ -16,6 +16,13 @@ import { log, error } from "./Helpers/helpers";
 export interface ResourceManager {
   [key: string]: Record<string, any>;
 }
+
+/**
+  * Summary. Shrek class where there's all the information needed for the discord cleinto to work
+  *
+  * Description. This Shrek bot class handles all the global information for events and 
+  *              commands to work
+  */   
 export class ShrekBot {
   constructor() {}
 
@@ -23,27 +30,30 @@ export class ShrekBot {
   /*                              Public                            
   /* *********************************************************************** */
 
+  /**
+   * Summary. Initialize this Shrek bot.
+   *
+   * @access  public
+   * 
+   * @return {void} 
+   */
   initialize() {
     //Create discord Client
     this.m_bot = new Discord.Client();
 
-    const jsonPath = "../../resources/json/";
-    this.m_jsonFullPath = path.resolve(__dirname, jsonPath);
+    //Get full path to where jsons are
+    this.m_jsonFullPath = path.resolve(__dirname, "../../resources/json/");
 
     //Load any other resource needed
     this.loadResourceManagerData();
 
     //Load commands and events for the first time
-    this._loadEvents();
+    this.loadEvents();
     this.loadCommands();
 
     //Client login
     this.m_bot.login(process.env.TOKEN);
   }
-
-  /* *********************************************************************** */
-  /*                            Private Functions                            
-  /* *********************************************************************** */
 
   /**
    * Summary. Load all commands.
@@ -88,7 +98,7 @@ export class ShrekBot {
    *
    * @return {void}
    */
-  _loadEvents(): void {
+  loadEvents(): void {
     // var _this = this;
     this.m_bot.removeAllListeners();
 
@@ -136,11 +146,11 @@ export class ShrekBot {
         );
       });
     });
-  }
+  }  
 
-  /**************************************************************************************************/
-  /*                                      Getters																										*/
-  /**************************************************************************************************/
+  /****************************************************************************/
+  /*                               Getters      										        	*/
+  /****************************************************************************/
 
   /**
    * Summary. returns the data loaded from json's in resources.

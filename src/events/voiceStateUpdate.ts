@@ -10,7 +10,6 @@ import Discord from "discord.js";
 /** Own Modules */
 import { log } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
-
 /**
  * Summary. Event when voice State changes.
  *
@@ -24,7 +23,11 @@ import { ShrekBot } from "../shrekBot";
  *
  * @return {void}
  */
-export function event(_client: ShrekBot, _old: Discord.VoiceState, _new: Discord.VoiceState) {
+export function event(
+  _client: ShrekBot,
+  _old: Discord.VoiceState,
+  _new: Discord.VoiceState
+) {
   //No case to continue if the user just disconnected or did another action that's not just connect
   if (!_new.channel || (_old.channel !== null && _old.channel === _new.channel)) {
     return;
@@ -37,14 +40,14 @@ export function event(_client: ShrekBot, _old: Discord.VoiceState, _new: Discord
   //If Bot ain't connected when someone just connected then it'll connect
   if (!BotVoice) {
     _new.channel.join().then((_connection) => {
+      const BotId = _client.Bot.user.id;
       let sound =
         GuildID in SoundsData.CherkBot
-          ? SoundsData.CherkBot[GuildID]
-          : SoundsData.CherkBot.default;
+          ? SoundsData.BotId[GuildID]
+          : SoundsData.BotId.default;
 
       _connection.play(_client.Config.SoundsPath + sound + ".mp3");
     });
-
     return;
   }
 
@@ -57,8 +60,8 @@ export function event(_client: ShrekBot, _old: Discord.VoiceState, _new: Discord
     return;
   }
 
-  let MemberName = _new.member.user.username;
-  if (MemberName in SoundsData && null !== VoiceConnection) {
+  const UserId = _new.member.user.id;
+  if (UserId in SoundsData && null !== VoiceConnection) {
     if (VoiceConnection.dispatcher) {
       //TODO: Add it to the queue
       return;
@@ -66,12 +69,12 @@ export function event(_client: ShrekBot, _old: Discord.VoiceState, _new: Discord
 
     //Take the sound as default or per guild
     let sound =
-      GuildID in SoundsData[MemberName]
-        ? SoundsData[MemberName][GuildID]
-        : SoundsData[MemberName].default;
+      GuildID in SoundsData[UserId]
+        ? SoundsData[UserId][GuildID]
+        : SoundsData[UserId].default;
 
     const Dispatcher = VoiceConnection.play(_client.Config.SoundsPath + sound + ".mp3");
-    
+
     //TODO: Make a queue
     Dispatcher.on("finish", () => {});
   }

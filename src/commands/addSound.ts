@@ -35,31 +35,36 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   const GuildId = Guild.id;
   const textChannel = _message.channel as TextChannel;
   const SoundData = _client.getJSON("sounds");
+  const Default = "default";
+  let serverIdentifier = GuildId;
 
   //Delete this command
   _message.delete();
 
-  if (!_args || _args.length !== 2) {
+  if (!_args || _args.length < 2) {
     const message = "Not enough arguments sent.";
     textChannel.send("Nah, ni poner un comando sabe.");
     return error(message);
   }
 
-  const ToAdd = getMemberByName(_args[0], _client, Guild.members.cache);
-  const ToAddName = ToAdd.user.username;
+  const ToAdd = getMemberByName(_args[0].toLowerCase(), _client, Guild.members.cache);
+  const ToAddId = ToAdd.user.id;
   if (!ToAdd) {
     textChannel.send("¿Quién es ese?");
     return error("Person could not be find.");
   }
 
   const SoundName = _args[1];
-
-  //If This person has no field yet, it creates it
-  if (!(ToAddName in SoundData)) {
-    SoundData[ToAddName] = {};
+  if (_args.length > 2 && _args[2] === Default) {
+    serverIdentifier = Default;
   }
 
-  SoundData[ToAddName][GuildId] = SoundName;
+  //If This person has no field yet, it creates it
+  if (!(ToAddId in SoundData)) {
+    SoundData[ToAddId] = {};
+  }
+
+  SoundData[ToAddId][serverIdentifier] = SoundName;
 
   fs.writeFile(
     path.resolve(__dirname, `../../../resources/json/sounds.json`),
@@ -69,5 +74,6 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
     }
   );
 
-  log(`Added ${SoundName}.mp3 to ${ToAddName} in ${Guild.name}`);
+  const GuildDefault = serverIdentifier === Default ? Default : Guild.name;
+  log(`Added ${SoundName}.mp3 to ${ToAdd.user.username} in ${GuildDefault}`);
 }

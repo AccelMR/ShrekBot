@@ -4,8 +4,9 @@ ShrekBot can also be useful, eventually.
 
 # Usage
 This bot has been created for learning purposes and to troll some friends. 
-
 It uses some techniques to create and reload command without turning the bot off or restarting.
+
+Prefix by default is "`.`" but you can change it under `./resources/json/config.json` 
 
 Some of the commands you can find would be:
   - Sound play when someone connects, depending on their sound from sounds.json.
@@ -27,7 +28,8 @@ Some of the commands you can find would be:
   > ```.addnick <nick> <Discord Name or another nick if the user already has one>```
   
 ### Important! 
-In order to use Sounds you'll need to add in sound.json the Discord name of the person and as a value the mp3 name. That .mp3 file has to be located in the directory under config.json "SoundsPath". 
+In order to use Sounds you'll need to add in sound.json the Discord name of the person and as a value it keeps the Server ID and the sound that it'll have for that server (see .addsound).
+That .mp3 file has to be located in the directory under config.json "SoundsPath". 
 
 # Installation
 In order to use this bot you'll need to create a bot in Discord API and create a .env file to save the TOKEN

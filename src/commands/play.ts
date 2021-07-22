@@ -33,7 +33,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   _message.delete();
 
   const voiceState = _message.guild.voice;
-  if (!voiceState){
+  if (!voiceState) {
     return error(`Bot is not connected to any channel in ${_message.guild.name}`);
   }
 
@@ -42,7 +42,5 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
     return error(`Bot is not connected to any channel in ${_message.guild.name}`);
   }
 
-  voiceConncetion.play(
-    ytdl("https://www.youtube.com/watch?v=ZlAU_w7-Xp8", { quality: "highestaudio" })
-  );
+  voiceConncetion.play(ytdl(_args[0], {quality: "highestaudio"}), { volume: 0.05 });
 }
