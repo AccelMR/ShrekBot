@@ -64,7 +64,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   //Adds it to the nick data and also writes it to the data file
   NicksData[Nick] = RealName;
   fs.writeFile(
-    path.resolve(__dirname, `../../resources/additional/nicks.json`),
+    path.resolve(__dirname, `../../resources/json/nicks.json`),
     JSON.stringify(NicksData),
     function writeJSON(_err) {
       if (_err) return error(_err);

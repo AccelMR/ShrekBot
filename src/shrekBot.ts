@@ -27,6 +27,9 @@ export class ShrekBot {
     //Create discord Client
     this.m_bot = new Discord.Client();
 
+    const jsonPath = "../../resources/json/";
+    this.m_jsonFullPath = path.resolve(__dirname, jsonPath);
+
     //Load any other resource needed
     this.loadResourceManagerData();
 
@@ -117,15 +120,14 @@ export class ShrekBot {
   loadResourceManagerData(): void {
     this.m_resourceManager = new Object() as ResourceManager;
 
-    const jsonPath = "../resources/json/";
-    fs.readdir(path.resolve(__dirname, jsonPath), (_err, _files) => {
+    fs.readdir(this.m_jsonFullPath, (_err, _files) => {
       if (_err) return error(_err);
 
       _files.forEach((file) => {
         const fileName: string = file.substr(0, file.lastIndexOf("."));
 
         this.m_resourceManager[fileName] = JSON.parse(
-          fs.readFileSync(path.resolve(__dirname, jsonPath + file), "utf8")
+          fs.readFileSync(`${this.m_jsonFullPath}/${file}`, "utf8")
         );
 
         log(
@@ -243,4 +245,14 @@ export class ShrekBot {
    * @memberof shrekBot
    */
   private m_commands: Discord.Collection<string, Function>;
+
+  /**
+   * Full path where jsons are saved.
+   *
+   * @access private
+   *
+   * @member   {string} jsonFullPath
+   * @memberof shrekBot
+   */
+  private m_jsonFullPath: string = "";
 }

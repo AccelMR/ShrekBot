@@ -19,7 +19,8 @@
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
     "@types/fs-extra": "^9.0.12",
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "ytdl": "^1.4.1"
   },
   "devDependencies": {
     "@types/node": "^16.3.3",
