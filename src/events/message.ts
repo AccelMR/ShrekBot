@@ -4,11 +4,13 @@ import Discord from "discord.js";
 /** Own Modules */
 import { log } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
+import { ResourceManager } from "../resourceManager";
 
 //When any message is recieved this gets called
 export const event = (_client: ShrekBot, _message: Discord.Message) => {
+  const resourceManager = ResourceManager.Instance;
   const Bot = _client.Bot;
-  const Config = _client.getJSON("config");
+  const Config = resourceManager.getJSON("config");
   const Channel = _message.channel;
 
   // Ignore all bots

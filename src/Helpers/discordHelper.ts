@@ -5,12 +5,13 @@ import {
   GuildMember,
   Snowflake,
   GuildChannel,
-  Message
+  Message,
 } from "discord.js";
 
 /** Own Modules */
 import { ShrekBot } from "../shrekBot";
 import { error } from "./helpers";
+import { ResourceManager } from "../resourceManager";
 
 /**
  * Summary. Find a member with given name/nick.
@@ -32,7 +33,8 @@ export function getMemberByName(
   _client: ShrekBot,
   _members: Collection<Snowflake, GuildMember>
 ): GuildMember {
-  const NicksData: Record<string, any> = _client.getJSON("nicks");
+  const resourceManager = ResourceManager.Instance;
+  const NicksData: Record<string, any> = resourceManager.getJSON("nicks");
 
   let MemberRealName: string = "";
   let Member: GuildMember = null;
@@ -50,16 +52,14 @@ export function getMemberByName(
     } else {
       const Values = Object.values(NicksData);
       if (_name in Values) {
-        MemberRealName =
-          Object.keys(NicksData)[Object.values(NicksData).indexOf(_name)];
+        MemberRealName = Object.keys(NicksData)[Object.values(NicksData).indexOf(_name)];
       }
     }
   }
 
   MemberRealName = MemberRealName === "" ? _name : MemberRealName;
   Member = _members.find(
-    (member) =>
-      member.user.username.toLowerCase() === MemberRealName.toLowerCase()
+    (member) => member.user.username.toLowerCase() === MemberRealName.toLowerCase()
   );
 
   return Member;
@@ -77,10 +77,7 @@ export function getMemberByName(
  *
  * @return {GuildChannel} Channel found by given name
  */
-export function getChannelByName(
-  _channelName: string,
-  _guild: Guild
-): GuildChannel {
+export function getChannelByName(_channelName: string, _guild: Guild): GuildChannel {
   //Find Channel by name, if no Channel is found or no channel was send then it'll return null
   let FoundChannel: GuildChannel = null;
 

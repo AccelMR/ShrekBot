@@ -13,6 +13,7 @@ import path from "path";
 import { getMemberByName } from "../Helpers/discordHelper";
 import { error, log } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
+import { ResourceManager } from "../resourceManager";
 
 //Triggers to call this command
 export const Triggers: string[] = ["addsound"];
@@ -22,26 +23,27 @@ export const Triggers: string[] = ["addsound"];
  *
  * @access  public
  *
- * @param {ShrekBot}   Bot Own reference of Shrek bot.
+ * @param {ShrekBot}          Bot Own reference of Shrek bot.
  *
  * @param {Discord.Message}   Message Discord message.
  *
- * @param {Array}   Array of arguments.
+ * @param {Array}             Array of arguments.
  *
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
+  const resourceManager = ResourceManager.Instance;
   const Guild = _message.guild;
   const GuildId = Guild.id;
   const textChannel = _message.channel as TextChannel;
-  const SoundData = _client.getJSON("sounds");
+  const SoundData = resourceManager.getJSON("sounds");
   const Default = "default";
   let serverIdentifier = GuildId;
 
   //Delete this command
   _message.delete();
 
-  if (!_args || _args.length < 2) {
+  if (_args?.length < 2) {
     const message = "Not enough arguments sent.";
     textChannel.send("Nah, ni poner un comando sabe.");
     return error(message);

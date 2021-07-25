@@ -12,6 +12,7 @@ import path from "path";
 /** Own modules  */
 import { log, error } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
+import { ResourceManager } from "../resourceManager";
 
 //Triggers to call this command
 export const Triggers: string[] = ["addnick"];
@@ -21,29 +22,30 @@ export const Triggers: string[] = ["addnick"];
  *
  * @access  public
  *
- * @param {ShrekBot}   Bot Own reference of Shrek bot.
+ * @param {ShrekBot}          Bot Own reference of Shrek bot.
  *
  * @param {Discord.Message}   Message Discord message.
  *
- * @param {Array}   Array of arguments.
+ * @param {Array}             Array of arguments.
  *
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   const Channel = _message.channel;
+  const resourceManager = ResourceManager.Instance;
 
   //Delete this command
   _message.delete();
 
   //If not arguments were send
-  if (!_args || _args.length !== 2) {
+  if (_args?.length !== 2) {
     const message = `I didn't even get arguments, noob.`;
     Channel.send(message);
     log("No args were send");
     return;
   }
 
-  let NicksData = _client.getJSON("nicks");
+  let NicksData = resourceManager.getJSON("nicks");
   //Nicks only can be saved with lower case
   let Nick = _args[0].toLowerCase();
   let RealName = _args[1];

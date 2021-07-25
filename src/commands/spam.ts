@@ -43,8 +43,8 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   }
 
   let ToSpamName = _args[0];
-  var MessageToSpam = typeof _args[1] === "undefined" ? "." : _args[1];
-  var SpamTimes: number = typeof _args[2] === "undefined" ? 5 : +_args[2];
+  var MessageToSpam = _args[1] ?? ".";
+  var SpamTimes: number = +_args[2] ?? 5;
 
   let Member = getMemberByName(ToSpamName, _client, Members);
   if (!Member) return error(`Member ${ToSpamName} not found from Spam command.`);

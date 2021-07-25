@@ -10,6 +10,7 @@ import Discord, { TextChannel } from "discord.js";
 /** Own modules  */
 import { log } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
+import { ResourceManager } from "../resourceManager";
 
 //Triggers to call this command
 export const Triggers: string[] = ["rd"];
@@ -28,6 +29,7 @@ export const Triggers: string[] = ["rd"];
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
+  const resourceManager = ResourceManager.Instance;
   //Get username of the one who calle this command
   const userName = _message.author.username;
   const textCannel: TextChannel = _message.channel as TextChannel;
@@ -41,7 +43,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
     return textCannel.send(`${user} ni siquiera estás conectado, cawn!`);
   }
 
-  const discData = _client.getJSON("discWhitelist");
+  const discData = resourceManager.getJSON("discWhitelist");
   const connectedMembers = guiltyVoiceChannel.members;
   let realMembers = connectedMembers;
 

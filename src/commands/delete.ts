@@ -37,7 +37,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   _message.delete();
 
   //Calculate how many messages this is going to delete
-  let messageToDelete: number = !_args || _args.length === 0 ? 1 : +_args[0];
+  let messageToDelete: number = _args?.length === 0 ? 1 : +_args[0];
   messageToDelete = messageToDelete.clamp(1, 99);
 
   clear(messageToDelete, channel);

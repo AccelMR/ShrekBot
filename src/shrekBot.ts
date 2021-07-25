@@ -12,17 +12,12 @@ import * as fs from "fs";
 /** Internal imports */
 import { log, error } from "./Helpers/helpers";
 
-//Interface of how the Resource Manager should be handled
-export interface ResourceManager {
-  [key: string]: Record<string, any>;
-}
-
 /**
-  * Summary. Shrek class where there's all the information needed for the discord cleinto to work
-  *
-  * Description. This Shrek bot class handles all the global information for events and 
-  *              commands to work
-  */   
+ * Summary. Shrek class where there's all the information needed for the discord cleinto to work
+ *
+ * Description. This Shrek bot class handles all the global information for events and
+ *              commands to work
+ */
 export class ShrekBot {
   constructor() {}
 
@@ -34,18 +29,15 @@ export class ShrekBot {
    * Summary. Initialize this Shrek bot.
    *
    * @access  public
-   * 
-   * @return {void} 
+   *
+   * @return {void}
    */
   initialize() {
     //Create discord Client
     this.m_bot = new Discord.Client();
 
-    //Get full path to where jsons are
-    this.m_jsonFullPath = path.resolve(__dirname, "../../resources/json/");
-
     //Load any other resource needed
-    this.loadResourceManagerData();
+    //this.loadResourceManagerData();
 
     //Load commands and events for the first time
     this.loadEvents();
@@ -83,7 +75,7 @@ export class ShrekBot {
             this.m_commands.set(_trigger, _fileCommand.run);
           });
 
-          log(`Loaded ${file} file as command`);
+          log(`Loaded [${file}] file as command`);
         });
       });
     });
@@ -114,60 +106,15 @@ export class ShrekBot {
         import(FilePath).then((_fileEvent) => {
           let eventName = file.split(".")[0];
           this.m_bot.on(eventName, _fileEvent.event.bind(null, this));
-          log(`Loaded ${eventName} event`);
+          log(`Loaded [${eventName}] event`);
         });
       });
     });
   }
 
-  /**
-   * Summary. Loads any other resource data.
-   *
-   * @access  public
-   *
-   * @return {void}
-   */
-  loadResourceManagerData(): void {
-    this.m_resourceManager = new Object() as ResourceManager;
-
-    fs.readdir(this.m_jsonFullPath, (_err, _files) => {
-      if (_err) return error(_err);
-
-      _files.forEach((file) => {
-        const fileName: string = file.substr(0, file.lastIndexOf("."));
-
-        this.m_resourceManager[fileName] = JSON.parse(
-          fs.readFileSync(`${this.m_jsonFullPath}/${file}`, "utf8")
-        );
-
-        log(
-          `Loaded ${file} in Resource Manager with data =>`,
-          this.m_resourceManager[fileName]
-        );
-      });
-    });
-  }  
-
   /****************************************************************************/
   /*                               Getters      										        	*/
   /****************************************************************************/
-
-  /**
-   * Summary. returns the data loaded from json's in resources.
-   *
-   * @access  public
-   *
-   * @return {JSON} The Data loaded from given name. Null if name does not exist
-   */
-  getJSON(_name: string): Record<string, any> {
-    if (_name in this.m_resourceManager) {
-      return this.m_resourceManager[_name];
-    }
-
-    const message = `Theres no ${_name} in Resource Manager.`;
-    log(message);
-    return { ["error"]: message };
-  }
 
   /**
    * Summary. Returns the Discord Client.
@@ -191,17 +138,6 @@ export class ShrekBot {
     return this.m_commands;
   }
 
-  /**
-   * Summary. Returns the config from resource manager.
-   *
-   * @access  public
-   *
-   * @return {Record<string, any>} config Object
-   */
-  get Config(): Record<string, any> {
-    return this.getJSON("config");
-  }
-
   /* *********************************************************************** */
   /*                              Properties                            
   /* *********************************************************************** */
@@ -215,16 +151,6 @@ export class ShrekBot {
    * @memberof ShrekBot
    */
   private m_bot: Discord.Client = null;
-
-  /**
-   * Resource Manager that saves all the json's in resources/additional/   Path.
-   *
-   * @access private
-   *
-   * @member   {ResourceManager} m_resourceManager
-   * @memberof shrekBot
-   */
-  private m_resourceManager: ResourceManager;
 
   /**
    * How many times evens have laoded.
@@ -257,12 +183,12 @@ export class ShrekBot {
   private m_commands: Discord.Collection<string, Function>;
 
   /**
-   * Full path where jsons are saved.
+   * Current dispatcher if there's one.
    *
    * @access private
    *
-   * @member   {string} jsonFullPath
+   * @member   {Discord.StreamDispatcher} m_dispatcher
    * @memberof shrekBot
    */
-  private m_jsonFullPath: string = "";
+  private m_dispatcher: Discord.StreamDispatcher = null;
 }

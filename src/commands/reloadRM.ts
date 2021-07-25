@@ -12,6 +12,7 @@ import path from "path"
 /** Own modules  */
 import { log, error } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
+import { ResourceManager } from "../resourceManager";
 
 //Triggers to call this command
 export const Triggers: string[] = ["rejson"];
@@ -32,7 +33,7 @@ export const Triggers: string[] = ["rejson"];
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   //Delete this command
   _message.delete();
-  _client.loadResourceManagerData();
+  ResourceManager.Instance.loadResourceManagerData();
 
   log(`Reloaded all Resources.`);
 }

@@ -10,6 +10,7 @@ import Discord from "discord.js";
 /** Own modules  */
 import { log, error } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
+import { ResourceManager } from "../resourceManager";
 
 //Triggers to call this command
 export const Triggers: string[] = ["r", "react"];
@@ -28,6 +29,7 @@ export const Triggers: string[] = ["r", "react"];
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
+  const resourceManager = ResourceManager.Instance;
   var channel = _message.channel;
 
   /*
@@ -42,7 +44,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
 
     //Get the index message that want to react
     var WordToReact = _args[0].toLowerCase();
-    var ToReact: number = !_args || _args.length === 1 ? 1 : +_args[1];
+    var ToReact: number = _args?.length === 1 ? 1 : +_args[1];
     ToReact -= 1;
 
     //Fetch 10 last messages
@@ -53,7 +55,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
       _messages.map(function (_msg, _indx, _array) {
         if (i === ToReact) {
           //Calls async funtion so it can react in the proper order
-          MessageReact(_msg, _client.getJSON("emojimap"), WordToReact);
+          MessageReact(_msg, resourceManager.getJSON("emojimap"), WordToReact);
         }
         i++;
       });

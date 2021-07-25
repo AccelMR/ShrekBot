@@ -20,11 +20,11 @@ export const Triggers: string[] = ["leave"];
  *
  * @access  public
  *
- * @param {ShrekBot}   Bot Own reference of Shrek bot.
+ * @param {ShrekBot}          Bot Own reference of Shrek bot.
  *
  * @param {Discord.Message}   Message Discord message.
  *
- * @param {Array}   Array of arguments.
+ * @param {Array}             Array of arguments.
  * 
  * @return {void} 
  */

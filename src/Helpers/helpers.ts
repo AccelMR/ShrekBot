@@ -1,13 +1,11 @@
 export function log(..._message: any[]): void {
-  let args = Array.prototype.slice.call(_message);
-  args.unshift(getFormatTime() + " ");
-  console.log.apply(console, args);
+  _message.unshift(getFormatTime() + " ");
+  console.log.apply(console, _message);
 }
 
-export function error(_message: any) {
-  let args = Array.prototype.slice.call(_message);
-  args.unshift(getFormatTime() + " ");
-  console.error.apply(console, args);
+export function error(..._message: any) {
+  _message.unshift(getFormatTime() + " ");
+  console.error.apply(console, _message);
 }
 
 /**
