@@ -11,7 +11,6 @@ import { log, error } from "./Helpers/helpers";
  * Description. Singleton Interface to get access to the Resource Manager class
  */
 export namespace ResourceManager {
-  
   //Interface of how the Resource Manager should be handled
   export interface Resource {
     [key: string]: Record<string, any>;
@@ -22,8 +21,8 @@ export namespace ResourceManager {
     //This was made like this because every file needs glbal access to Resources
     //Singleton Static access
     private static _instance: CResourceManager;
-    public static get(){
-      if(!CResourceManager._instance){
+    public static get() {
+      if (!CResourceManager._instance) {
         CResourceManager._instance = new CResourceManager();
       }
       return CResourceManager._instance;
@@ -65,10 +64,7 @@ export namespace ResourceManager {
             fs.readFileSync(`${this.m_jsonFullPath}/${file}`, "utf8")
           );
 
-          log(
-            `Loaded [${file}] in Resource Manager with data =>`,
-            this.m_resourceManager[fileName]
-          );
+          log(`Loaded [${file}] in Resource Manager`);
         });
       });
     }
@@ -129,7 +125,6 @@ export namespace ResourceManager {
      */
     private m_resourceManager: Resource;
   }
-
 
   export const Instance = CResourceManager.get();
 }

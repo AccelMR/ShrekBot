@@ -2,7 +2,7 @@
 import Discord from "discord.js";
 
 /** Own Modules */
-import { log } from "../Helpers/helpers";
+import { log, error } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
 import { ResourceManager } from "../resourceManager";
 
@@ -36,7 +36,11 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
       //Add it to the queue
       return;
     }
-    VoiceConnection.play(Config.SoundsPath + "noEsteChflando.mp3");
+    try {
+      VoiceConnection.play(process.env.SOUND_LOCAL_PATH + "noEsteChflando.mp3");
+    } catch (_err) {
+      error(_err);
+    }
   }
 
   /* *********************************************************************** */

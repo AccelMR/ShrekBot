@@ -1,11 +1,11 @@
 import { ShrekBot } from "./shrekBot";
 import { ResourceManager } from "./resourceManager";
 import { RemoteResources } from "./remoteResources";
- 
+
 //Loads Resources
-ResourceManager.Instance.initialize();
 RemoteResources.Instance.initialize();
-RemoteResources.Instance.downloadAudios();
+RemoteResources.Instance.checkIfNewAudios();
+ResourceManager.Instance.initialize();
 
 //Initialize this Discord App
 const g_shrekBot: ShrekBot = new ShrekBot();

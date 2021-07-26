@@ -50,7 +50,7 @@ export function event(
       const BotId = _client.Bot.user.id;
       const sound = SoundsData[BotId][GuildID] ?? SoundsData[BotId].default;
 
-      _connection.play(resourceManager.Config.SoundsPath + sound + ".mp3");
+      _connection.play(process.env.SOUND_LOCAL_PATH + sound + ".mp3");
     });
     return;
   }
@@ -74,9 +74,16 @@ export function event(
     //Take the sound as default or per guild
     const sound = SoundsData[UserId][GuildID] ?? SoundsData[UserId].default;
 
-    const Dispatcher = VoiceConnection.play(resourceManager.Config.SoundsPath + sound + ".mp3");
+    try {
+      const Dispatcher = VoiceConnection.play(
+        process.env.SOUND_LOCAL_PATH + sound + ".mp3"
+      );
 
-    //TODO: Make a queue
-    Dispatcher.on("finish", () => {});
+      //TODO: Make a queue
+      Dispatcher.on("finish", () => {});
+      
+    } catch (_err) {
+      error(_err);
+    }
   }
 }
