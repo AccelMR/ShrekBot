@@ -11,9 +11,11 @@ import * as fs from "fs";
 
 /** Internal imports */
 import { log, error } from "./Helpers/helpers";
+import { ResourceManager } from "./resourceManager";
+import { RemoteResources } from "./remoteResources";
 
 /**
- * Summary. Shrek class where there's all the information needed for the discord cleinto to work
+ * Summary. Shrek class where there's all the information needed for the discord client to work
  *
  * Description. This Shrek bot class handles all the global information for events and
  *              commands to work
@@ -22,6 +24,14 @@ export class ShrekBot {
   constructor() {
     //Init Commands
     this.m_commands = new Discord.Collection();
+
+    //Save managers
+    this.m_resourceManager = new ResourceManager();
+    this.m_remoteResources = new RemoteResources();
+
+    this.m_remoteResources.initialize();
+    this.m_remoteResources.checkIfNewAudios();
+    this.m_resourceManager.initialize();
   }
 
   /* *********************************************************************** */
@@ -141,6 +151,28 @@ export class ShrekBot {
     return this.m_commands;
   }
 
+  /**
+   * Summary. Returns global resource manager.
+   *
+   * @access  public
+   *
+   * @return {ResourceManager} global Resource manager
+   */
+  get ResMng(): ResourceManager {
+    return this.m_resourceManager;
+  }
+
+  /**
+   * Summary. Returns global Resource Remote Manager.
+   *
+   * @access  public
+   *
+   * @return {RemoteResource} the global Remote resource manager
+   */
+  get RemoteMng(): RemoteResources {
+    return this.m_remoteResources;
+  }
+
   /* *********************************************************************** */
   /*                              Properties                            
   /* *********************************************************************** */
@@ -194,4 +226,8 @@ export class ShrekBot {
    * @memberof shrekBot
    */
   private m_dispatcher?: Discord.StreamDispatcher;
+
+  //Reference to resource and remote managers
+  private m_resourceManager: ResourceManager;
+  private m_remoteResources: RemoteResources;
 }

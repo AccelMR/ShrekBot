@@ -1,6 +1,6 @@
 /**
  * @Description Get Audios from drive.
- * 
+ *
  * @author Accel Magaña Rodriguez. <accel.mr@gmail.com>
  */
 
@@ -26,11 +26,12 @@ export const Triggers: string[] = ["daudios"];
  * @param {Discord.Message}   Message Discord message.
  *
  * @param {Array}             Array of arguments.
- * 
- * @return {void} 
+ *
+ * @return {void}
  */
-export function run(_client: ShrekBot, _message: Discord.Message, _args : string[]){
+export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   //Delete this command
   _message.delete();
-  RemoteResources.Instance.checkIfNewAudios();
-};
+  _client.RemoteMng.checkIfNewAudios();
+}
+

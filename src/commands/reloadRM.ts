@@ -33,7 +33,7 @@ export const Triggers: string[] = ["rejson"];
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   //Delete this command
   _message.delete();
-  ResourceManager.Instance.loadResourceManagerData();
+  _client.ResMng.loadResourceManagerData();
 
   log(`Reloaded all Resources.`);
 }

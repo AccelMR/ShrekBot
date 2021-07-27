@@ -29,7 +29,7 @@ export const Triggers: string[] = ["r", "react"];
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
-  const resourceManager = ResourceManager.Instance;
+  const resourceManager = _client.ResMng;
   var channel = _message.channel;
 
   /*

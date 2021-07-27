@@ -23,6 +23,6 @@ export const Triggers: string[] = ["reevent", "revent"];
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args : string[]){
   _message.delete();
-  log("Commands reloaded");
+  log("Events reloaded");
   _client.loadEvents();
 };

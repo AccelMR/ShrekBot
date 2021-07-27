@@ -6,9 +6,9 @@ import { log, error } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
 import { ResourceManager } from "../resourceManager";
 
-//When any message is recieved this gets called
+//When any message is received this gets called
 export const event = (_client: ShrekBot, _message: Discord.Message) => {
-  const resourceManager = ResourceManager.Instance;
+  const resourceManager = _client.ResMng;
   const Bot = _client.Bot;
   if (!Bot) {
     return error("Bot is null in message event.");
@@ -67,7 +67,7 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   const command = args.shift()?.toLowerCase();
   if (!command) { return; }
 
-  // Grab the command data from the client.commands Enmap
+  // Grab the command data from the client.commands map
   const cmd = _client.Commands.get(command);
 
   // If that command doesn't exist, silently exit and do nothing

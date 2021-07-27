@@ -32,7 +32,7 @@ export const Triggers: string[] = ["addsound"];
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
-  const resourceManager = ResourceManager.Instance;
+  const resourceManager = _client.ResMng;
   const Guild = _message.guild;
   if (!Guild) {
     return error("Guild is undefined in addSound command");

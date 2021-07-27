@@ -1,15 +1,8 @@
 import { ShrekBot } from "./shrekBot";
-import { ResourceManager } from "./resourceManager";
-import { RemoteResources } from "./remoteResources";
-
-//Loads Resources
-RemoteResources.Instance.initialize();
-RemoteResources.Instance.checkIfNewAudios();
-ResourceManager.Instance.initialize();
 
 //Initialize this Discord App
-const g_shrekBot: ShrekBot = new ShrekBot();
-g_shrekBot.initialize();
+const shrekBot: ShrekBot = new ShrekBot();
+shrekBot.initialize();
 
 //TODO list:
 // - Make a queue for audios

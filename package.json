@@ -4,7 +4,7 @@
   "description": "Shrek bot is a bot made for learning and trolly purposes.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node dist/src/main.js"
   },
   "repository": {
     "type": "git",

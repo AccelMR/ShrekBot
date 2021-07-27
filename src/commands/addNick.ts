@@ -32,7 +32,7 @@ export const Triggers: string[] = ["addnick"];
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   const Channel = _message.channel;
-  const resourceManager = ResourceManager.Instance;
+  const resourceManager = _client.ResMng;
 
   //Delete this command
   _message.delete();

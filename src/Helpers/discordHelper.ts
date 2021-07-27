@@ -33,7 +33,7 @@ export function getMemberByName(
   _client: ShrekBot,
   _members: Collection<Snowflake, GuildMember>
 ): GuildMember | undefined {
-  const resourceManager = ResourceManager.Instance;
+  const resourceManager = _client.ResMng;
   const NicksData: Record<string, any> = resourceManager.getJSON("nicks");
 
   let MemberRealName: string = "";

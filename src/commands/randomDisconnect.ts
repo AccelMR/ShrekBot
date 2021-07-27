@@ -29,7 +29,7 @@ export const Triggers: string[] = ["rd"];
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
-  const resourceManager = ResourceManager.Instance;
+  const resourceManager = _client.ResMng;
   //Get username of the one who calle this command
   const userName = _message.author.username;
   const textCannel: TextChannel = _message.channel as TextChannel;
