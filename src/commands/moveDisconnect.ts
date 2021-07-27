@@ -31,6 +31,8 @@ export const Triggers: string[] = ["m", "d", "move"];
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   //Get all members in this guild
   const Guild = _message.guild;
+  if (!Guild) return error("Guild is null in moveDisconnect");
+
   const MemberManager = Guild.members;
   const Members = MemberManager.cache;
   const AuthorName = _message.author.username;
@@ -55,14 +57,14 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   if (!VoiceConnection) return error("Player is not connected to any channel.");
 
   /**
-   * Look for channel, it doens't matter if channel = null, that only means that the person is
+   * Look for channel, it doesn't matter if channel = null, that only means that the person is
    * going to be disconnected
    * */
   let ChannelToMove = getChannelByName(ChannelName, Guild);
 
   //Actual command
-  VoiceConnection.setChannel(ChannelToMove);
+  VoiceConnection.setChannel(ChannelToMove ?? null);
 
-  let moveDisconect = ChannelToMove === null ? "disconnected" : "moved to ";
-  log(`${AuthorName} has ${moveDisconect} ${Member.user.username}${ChannelName}`);
+  let moveDisconnect = !ChannelToMove ? "disconnected" : "moved to ";
+  log(`${AuthorName} has ${moveDisconnect} ${Member.user.username}${ChannelName}`);
 }

@@ -31,6 +31,8 @@ export namespace ResourceManager {
     private constructor() {
       //Get full path to where jsons are
       this.m_jsonFullPath = path.resolve(__dirname, "../../resources/json/");
+
+      this.m_resourceManager = new Object() as Resource;
     }
 
     /**
@@ -52,8 +54,6 @@ export namespace ResourceManager {
      * @return {void}
      */
     loadResourceManagerData() {
-      this.m_resourceManager = new Object() as Resource;
-
       fs.readdir(this.m_jsonFullPath, (_err, _files) => {
         if (_err) return error(_err);
 

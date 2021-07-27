@@ -10,6 +10,9 @@ import { ResourceManager } from "../resourceManager";
 export const event = (_client: ShrekBot, _message: Discord.Message) => {
   const resourceManager = ResourceManager.Instance;
   const Bot = _client.Bot;
+  if (!Bot) {
+    return error("Bot is null in message event.");
+  }
   const Config = resourceManager.getJSON("config");
   const Channel = _message.channel;
 
@@ -20,9 +23,9 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
    * check if it has mentioned the bot
    */
   const Mentions = _message.mentions;
-  if (Mentions.has(_client.Bot.user)) {
+  if (Mentions.has(Bot.user as Discord.User)) {
     const Msg = "No esté chiflando ahorita, caramba!";
-    const BotVoice = _message.guild.voice;
+    const BotVoice = _message.guild?.voice;
     if (!BotVoice) {
       return _message.reply(Msg);
     }
@@ -55,10 +58,14 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
     .slice(Config.Prefix.length)
     .trim()
     .match(/(?:[^\s"]+|"[^"]*")+/g);
+
+  if (!args) { return; }
+
   for (let i = 0; i < args.length; i++) {
     args[i] = args[i].toString().replace(/"/g, "");
   }
-  const command = args.shift().toLowerCase();
+  const command = args.shift()?.toLowerCase();
+  if (!command) { return; }
 
   // Grab the command data from the client.commands Enmap
   const cmd = _client.Commands.get(command);

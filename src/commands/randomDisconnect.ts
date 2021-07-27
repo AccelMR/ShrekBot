@@ -35,11 +35,11 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   const textCannel: TextChannel = _message.channel as TextChannel;
   const member = _message.member;
   const Guild = _message.guild;
-  const user = _message.member.user;
+  const user = _message.member?.user;
 
-  const guiltyVoiceChannel: Discord.VoiceChannel = member.voice.channel;
+  const guiltyVoiceChannel = member?.voice.channel;
 
-  if (null === guiltyVoiceChannel) {
+  if (!guiltyVoiceChannel) {
     return textCannel.send(`${user} ni siquiera estás conectado, cawn!`);
   }
 
@@ -55,7 +55,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
 
   const toDisconnect = realMembers.random();
   const victimChannel = toDisconnect.voice;
-  if (victimChannel === null) {
+  if (!victimChannel) {
     return log("For any reason the voice channel was null.");
   }
 

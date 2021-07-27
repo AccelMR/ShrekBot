@@ -9,7 +9,7 @@ import Discord, { GuildMember } from "discord.js";
 import { getChannelByName } from "../Helpers/discordHelper";
 
 /** Own modules  */
-import { log } from "../Helpers/helpers";
+import { log, error } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
 
 //Triggers to call this command
@@ -33,8 +33,9 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   const userName = _message.author.username;
   const member = _message.member;
   const Guild = _message.guild;
+  if (!Guild) return error("Guild Id undefined in Join command");
 
-  let voiceChannel: Discord.VoiceChannel = member.voice.channel;
+  let voiceChannel = member?.voice.channel;
 
   if (_args.length > 0) {
     voiceChannel = getChannelByName(_args[0], Guild) as Discord.VoiceChannel;
@@ -43,7 +44,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   //Delete this command
   _message.delete();
 
-  if (null === voiceChannel) return log(`No voice channel found for ${userName}`);
+  if (!voiceChannel) return log(`No voice channel found for ${userName}`);
 
-  voiceChannel.join();
+  voiceChannel?.join();
 }

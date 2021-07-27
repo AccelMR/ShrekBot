@@ -34,6 +34,9 @@ export const Triggers: string[] = ["addsound"];
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   const resourceManager = ResourceManager.Instance;
   const Guild = _message.guild;
+  if (!Guild) {
+    return error("Guild is undefined in addSound command");
+  }
   const GuildId = Guild.id;
   const textChannel = _message.channel as TextChannel;
   const SoundData = resourceManager.getJSON("sounds");
@@ -50,8 +53,8 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   }
 
   const ToAdd = getMemberByName(_args[0].toLowerCase(), _client, Guild.members.cache);
-  const ToAddId = ToAdd.user.id;
-  if (!ToAdd) {
+  const ToAddId = ToAdd?.user.id;
+  if (!ToAdd || !ToAddId) {
     textChannel.send("¿Quién es ese?");
     return error("Person could not be find.");
   }

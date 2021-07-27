@@ -16,28 +16,28 @@ import { ResourceManager } from "../resourceManager";
 /**
  * Summary. Find a member with given name/nick.
  *
- * Desciption. This function uses Nickdata from nicks.json to loock for the real username
- *             If there's no nicks then it'll look in guiold member for the given name.
+ * Description. This function uses Nickdata from nicks.json to look for the real username
+ *             If there's no nicks then it'll look in guild member for the given name.
  *             If at the end any member is found then it'll return null
  *
  * @access  public
  *
  * @param {string}   nick or real name of the member to look for.
  *
- * @param {shreckBot}   client wrapper to get nick data.
+ * @param {shrekBot}   client wrapper to get nick data.
  *
- * @return {Guildmember} Guild member found by name. Null of no member was find
+ * @return {GuildMember} Guild member found by name. Null of no member was find
  */
 export function getMemberByName(
   _name: string,
   _client: ShrekBot,
   _members: Collection<Snowflake, GuildMember>
-): GuildMember {
+): GuildMember | undefined {
   const resourceManager = ResourceManager.Instance;
   const NicksData: Record<string, any> = resourceManager.getJSON("nicks");
 
   let MemberRealName: string = "";
-  let Member: GuildMember = null;
+  let Member: GuildMember | undefined = undefined;
 
   //TODO probably this function can be reduce and optimized
   if (NicksData) {
@@ -77,9 +77,12 @@ export function getMemberByName(
  *
  * @return {GuildChannel} Channel found by given name
  */
-export function getChannelByName(_channelName: string, _guild: Guild): GuildChannel {
+export function getChannelByName(
+  _channelName: string,
+  _guild: Guild
+): GuildChannel | undefined {
   //Find Channel by name, if no Channel is found or no channel was send then it'll return null
-  let FoundChannel: GuildChannel = null;
+  let FoundChannel: GuildChannel | undefined;
 
   if (_channelName !== "") {
     let GuildChannelManager = _guild.channels;
@@ -87,7 +90,7 @@ export function getChannelByName(_channelName: string, _guild: Guild): GuildChan
       (Channel) => Channel.name.toLowerCase() === _channelName
     );
     if (FoundChannel === undefined) {
-      FoundChannel = null;
+      FoundChannel = undefined;
     }
   }
 

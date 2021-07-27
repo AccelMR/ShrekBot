@@ -31,15 +31,18 @@ export const Triggers: string[] = ["spam", "sp"];
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   //Get all members in this guild
   let Guild = _message.guild;
-  let MemberManager = Guild.members;
-  let Members = MemberManager.cache;
-  let SpamerName = _message.author.username;
+  let MemberManager = Guild?.members;
+  let Members = MemberManager?.cache;
+  if (!Members) {
+    return error("There aren't members in that Guild");
+  }
+  let SpammerName = _message.author.username;
 
   //Delete this command
   _message.delete();
 
   if (typeof _args[0] === "undefined") {
-    return error("No srgs sent");
+    return error("No args sent");
   }
 
   let ToSpamName = _args[0];
@@ -54,7 +57,7 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
       _dmChannel.send(MessageToSpam);
     }
     log(
-      `${SpamerName} has spammed -${MessageToSpam}- to ${ToSpamName} this many times ${SpamTimes}`
+      `${SpammerName} has spammed -${MessageToSpam}- to ${ToSpamName} this many times ${SpamTimes}`
     );
   });
 }

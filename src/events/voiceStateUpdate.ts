@@ -30,7 +30,7 @@ export function event(
   _new: Discord.VoiceState
 ) {
   //No case to continue if the user just disconnected or did another action that's not just connect
-  if (!_new.channel || (_old.channel !== null && _old.channel === _new.channel)) {
+  if (!_new.channel || (!_old.channel && _old.channel === _new.channel)) {
     return;
   }
 
@@ -40,6 +40,11 @@ export function event(
   const SoundsData = resourceManager.getJSON("sounds");
   const GuildID = _new.guild.id;
 
+  const Bot = _client.Bot;
+  if (!Bot) {
+    return error("Bot is null in message event.");
+  }
+
   if (!SoundsData) {
     return error("Sound Data could not be found.");
   }
@@ -47,7 +52,11 @@ export function event(
   //If Bot ain't connected when someone just connected then it'll connect
   if (!BotVoice) {
     _new.channel.join().then((_connection) => {
-      const BotId = _client.Bot.user.id;
+      const BotId = Bot.user?.id;
+      if (!BotId) {
+        return error("BotId is undefined in VoiceUpdate");
+      }
+
       const sound = SoundsData[BotId][GuildID] ?? SoundsData[BotId].default;
 
       _connection.play(process.env.SOUND_LOCAL_PATH + sound + ".mp3");
@@ -64,8 +73,8 @@ export function event(
     return;
   }
 
-  const UserId = _new.member.user.id;
-  if (UserId in SoundsData && null !== VoiceConnection) {
+  const UserId = _new.member?.user.id;
+  if (UserId && UserId in SoundsData && VoiceConnection) {
     if (VoiceConnection.dispatcher) {
       //TODO: Add it to the queue
       return;
@@ -81,7 +90,6 @@ export function event(
 
       //TODO: Make a queue
       Dispatcher.on("finish", () => {});
-      
     } catch (_err) {
       error(_err);
     }

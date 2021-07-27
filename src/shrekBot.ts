@@ -19,7 +19,10 @@ import { log, error } from "./Helpers/helpers";
  *              commands to work
  */
 export class ShrekBot {
-  constructor() {}
+  constructor() {
+    //Init Commands
+    this.m_commands = new Discord.Collection();
+  }
 
   /* *********************************************************************** */
   /*                              Public                            
@@ -57,7 +60,7 @@ export class ShrekBot {
    * @return {void}
    */
   loadCommands() {
-    this.m_commands = new Discord.Collection();
+    this.m_commands.clear();
 
     const CommandsPath = "./commands/";
     const FullPath = path.resolve(__dirname, CommandsPath);
@@ -92,7 +95,7 @@ export class ShrekBot {
    */
   loadEvents(): void {
     // var _this = this;
-    this.m_bot.removeAllListeners();
+    this.m_bot?.removeAllListeners();
 
     const EventsPath = "./events/";
     const FullPath = path.resolve(__dirname, EventsPath);
@@ -105,7 +108,7 @@ export class ShrekBot {
         decache(FilePath);
         import(FilePath).then((_fileEvent) => {
           let eventName = file.split(".")[0];
-          this.m_bot.on(eventName, _fileEvent.event.bind(null, this));
+          this.m_bot?.on(eventName, _fileEvent.event.bind(null, this));
           log(`Loaded [${eventName}] event`);
         });
       });
@@ -150,7 +153,7 @@ export class ShrekBot {
    * @member   {Discord.Client} m_bot
    * @memberof ShrekBot
    */
-  private m_bot: Discord.Client = null;
+  private m_bot?: Discord.Client;
 
   /**
    * How many times evens have laoded.
@@ -190,5 +193,5 @@ export class ShrekBot {
    * @member   {Discord.StreamDispatcher} m_dispatcher
    * @memberof shrekBot
    */
-  private m_dispatcher: Discord.StreamDispatcher = null;
+  private m_dispatcher?: Discord.StreamDispatcher;
 }

@@ -29,7 +29,7 @@ export const Triggers: string[] = ["leave"];
  * @return {void} 
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args : string[]){
-  const VoiceState = _message.guild.voice;
+  const VoiceState = _message.guild?.voice;
   if(!VoiceState){return;}
 
   const VoiceChannel = VoiceState.channel;

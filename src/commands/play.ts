@@ -32,15 +32,11 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
   //Delete this command
   _message.delete();
 
-  const voiceState = _message.guild.voice;
-  if (!voiceState) {
-    return error(`Bot is not connected to any channel in ${_message.guild.name}`);
+  const voiceState = _message.guild?.voice;
+  const voiceConnection = voiceState?.connection;
+  if (!voiceState || !voiceConnection) {
+    return error(`Bot is not connected to any channel in ${_message.guild?.name}`);
   }
 
-  const voiceConncetion = voiceState.connection;
-  if (voiceConncetion === null) {
-    return error(`Bot is not connected to any channel in ${_message.guild.name}`);
-  }
-
-  voiceConncetion.play(ytdl(_args[0], {quality: "highestaudio"}), { volume: 0.05 });
+  voiceConnection.play(ytdl(_args[0], { quality: "highestaudio" }), { volume: 0.05 });
 }

@@ -66,11 +66,11 @@ export namespace RemoteResources {
      * Summary. Checks if it has all the audios in the drive folder.
      *
      * @access  public
-     * 
+     *
      * @return {void}
      */
     checkIfNewAudios() {
-      this.m_drive.files
+      this.m_drive?.files
         .list({
           q: `'${this.m_folderId}' in parents and trashed=false`,
         })
@@ -85,16 +85,20 @@ export namespace RemoteResources {
     /*                              Private methods                            
   /* *********************************************************************** */
 
-  /**
-   * Summary. Executed once we got all the info from the files in a folder.
-   *
-   * @access  private
-   * 
-   * @return {void}
-   */
-    _processFolder(_files: drive_v3.Schema$File[]) {
+    /**
+     * Summary. Executed once we got all the info from the files in a folder.
+     *
+     * @access  private
+     *
+     * @return {void}
+     */
+    _processFolder(_files: drive_v3.Schema$File[] | undefined) {
       const Files = _files;
       //const SoundsPath =
+
+      if (Files === undefined) {
+        return error("Didn't get any Files in processFolder()");
+      }
 
       for (const _file of Files) {
         const FullPath = `${process.env.SOUND_LOCAL_PATH}${_file.name}`;
@@ -115,12 +119,12 @@ export namespace RemoteResources {
      * Summary. Async. Downloads the audio to local pc
      *
      * @access  private
-     * 
+     *
      * @return {void}
      */
     async _downloadAudio(_path: string, _file: drive_v3.Schema$File) {
       let sound = fs.createWriteStream(_path);
-      const response = await this.m_drive.files.get(
+      const response = await this.m_drive?.files.get(
         {
           fileId: _file.id,
           alt: "media",
@@ -128,7 +132,7 @@ export namespace RemoteResources {
         { responseType: "stream" }
       );
 
-      const streamy = response.data as Readable;
+      const streamy = response?.data as Readable;
       await streamy.pipe(sound);
 
       log(`File downloaded =>`, _file);
@@ -138,15 +142,15 @@ export namespace RemoteResources {
     /*                              members                            
   /* *********************************************************************** */
 
-  /**
-   * Drive Folder Id.
-   *
-   * @access private
-   *
-   * @member   {string} m_folderId
-   * @memberof remoteResources
-   */
-    private m_folderId: String = "";
+    /**
+     * Drive Folder Id.
+     *
+     * @access private
+     *
+     * @member   {string} m_folderId
+     * @memberof remoteResources
+     */
+    private m_folderId: string | undefined = "";
 
     /**
      * Reference to the drive object.
@@ -156,7 +160,7 @@ export namespace RemoteResources {
      * @member   {drive_v3.Drive} m_drive
      * @memberof remoteResources
      */
-    private m_drive: drive_v3.Drive;
+    private m_drive: drive_v3.Drive | undefined;
 
     /**
      * OAuth2 from google.
@@ -168,19 +172,19 @@ export namespace RemoteResources {
      */
     private m_oauth2: any;
 
-    //Here are all the credentials needed. All of them are Strings and come from 
+    //Here are all the credentials needed. All of them are Strings and come from
     //the /resources/credentials/driveCredentials.json
-    private CLIENT_ID: string = "";
-    private CLIENT_SECRET: string = "";
-    private REDIRECT_URI: string = "";
-    private REFRESH_TOKEN: string = "";
+    private CLIENT_ID: string | undefined = "";
+    private CLIENT_SECRET: string | undefined = "";
+    private REDIRECT_URI: string | undefined = "";
+    private REFRESH_TOKEN: string | undefined = "";
   }
 
   /**
    * Summary. Quick way to access the Remote Resource Instance.
    *
    * @access  public
-   * 
+   *
    * @return {CRemoteResources} The unique instance of the RemoteResources
    */
   export const Instance = CRemoteResources.get();
