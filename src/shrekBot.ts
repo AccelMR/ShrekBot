@@ -12,7 +12,7 @@ import * as fs from "fs";
 /** Internal imports */
 import { log, error } from "./Helpers/helpers";
 import { ResourceManager } from "./resourceManager";
-import { RemoteResources } from "./remoteResources";
+import { Queue } from "queue-typescript";
 
 /**
  * Summary. Shrek class where there's all the information needed for the discord client to work
@@ -24,14 +24,13 @@ export class ShrekBot {
   constructor() {
     //Init Commands
     this.m_commands = new Discord.Collection();
-
+ 
     //Save managers
     this.m_resourceManager = new ResourceManager();
-    this.m_remoteResources = new RemoteResources();
-
-    this.m_remoteResources.initialize();
-    this.m_remoteResources.checkIfNewAudios();
     this.m_resourceManager.initialize();
+
+    //Init Stack
+    this.m_musicStack = new Queue<Discord.StreamDispatcher>();
   }
 
   /* *********************************************************************** */
@@ -74,13 +73,13 @@ export class ShrekBot {
 
     const CommandsPath = "./commands/";
     const FullPath = path.resolve(__dirname, CommandsPath);
-
+ 
     fs.readdir(FullPath, (err, files) => {
       if (err) return console.error(err);
 
-      files.forEach((file) => {
+      files.forEach((file:string) => {
         const FilePath = `${FullPath}/${file}`;
-        decache(FilePath);
+        decache(FilePath); 
         import(FilePath).then((_fileCommand) => {
           let commandTriggers: string[] = _fileCommand.Triggers;
 
@@ -162,20 +161,19 @@ export class ShrekBot {
     return this.m_resourceManager;
   }
 
-  /**
-   * Summary. Returns global Resource Remote Manager.
-   *
-   * @access  public
-   *
-   * @return {RemoteResource} the global Remote resource manager
-   */
-  get RemoteMng(): RemoteResources {
-    return this.m_remoteResources;
-  }
-
   /* *********************************************************************** */
   /*                              Properties                            
   /* *********************************************************************** */
+
+  /**
+   * Stack where the music is saved.
+   *
+   * @access private
+   *
+   * @member   {Queue<Discord.StreamDispatcher>} m_musicStack
+   * @memberof shrekBot
+   */
+  private m_musicStack: Queue<Discord.StreamDispatcher>;
 
   /**
    * Discord Client for shrek bot.
@@ -229,5 +227,4 @@ export class ShrekBot {
 
   //Reference to resource and remote managers
   private m_resourceManager: ResourceManager;
-  private m_remoteResources: RemoteResources;
 }

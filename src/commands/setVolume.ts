@@ -1,19 +1,18 @@
 /**
- * @Description Play music command.
+ * @Description Change volume command.
  *
  * @author Accel Magaña Rodriguez. <accel.mr@gmail.com>
  */
 
 /* External imports */
 import Discord from "discord.js";
-import ytdl from "ytdl-core";
 
 /** Own modules  */
 import { error, log } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
 
 //Triggers to call this command
-export const Triggers: string[] = ["play"];
+export const Triggers: string[] = ["volume"];
 
 /**
  * Summary.Play audio from Youtube.
@@ -29,28 +28,24 @@ export const Triggers: string[] = ["play"];
  * @return {void}
  */
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
-  const voiceState = _message.guild?.voice;
-  const voiceConnection = voiceState?.connection;
+
   const Channel = _message.channel;
 
   //Delete this command
   _message.delete();
 
+  const voiceState = _message.guild?.voice;
+  const voiceConnection = voiceState?.connection;
   if (!voiceState || !voiceConnection) {
     return error(`Bot is not connected to any channel in ${_message.guild?.name}`);
   }
 
-  const URLVideo = _args[0];
-  const IsURLValid = ytdl.validateURL(URLVideo);
-
-  if (!IsURLValid) {
-    error(`URL -${URLVideo}- is not valid `);
-    const message = `Esa URL ta chueca mi mai.`;
+  const volume: number = +_args[0] ?? 0.05;
+  if(volume > 1){
+    const message = "Tas loco cuate? eso está muy fuerte xddxdx"
     Channel.send(message);
-    return
+    return;
   }
 
-  
-
-  voiceConnection.play(ytdl(_args[0], { quality: "highestaudio" }), { volume: 0.05 });
+  voiceConnection.dispatcher.setVolume(volume);
 }

@@ -18,7 +18,7 @@ import { ResourceManager } from "../resourceManager";
 export const Triggers: string[] = ["rejson"];
 
 /**
- * Summary.Realods jsons if there was a change on them.
+ * Summary.Reloads jsons if there was a change on them.
  *
  * @access  public
  *

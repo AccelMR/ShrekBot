@@ -1,23 +1,22 @@
 /**
- * @Description Get Audios from drive.
+ * @Description Stop music command.
  *
  * @author Accel Magaña Rodriguez. <accel.mr@gmail.com>
  */
+
 
 /* External imports */
 import Discord from "discord.js";
 
 /** Own modules  */
-import { log } from "../Helpers/helpers";
-import { RemoteResources } from "../remoteResources";
-import { ResourceManager } from "../resourceManager";
+import { error, log } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
 
 //Triggers to call this command
-export const Triggers: string[] = ["daudios"];
+export const Triggers: string[] = ["stop"];
 
 /**
- * Summary.Checks in drive folder if there's any new audio by name and downloads it.
+ * Summary.Play audio from Youtube.
  *
  * @access  public
  *
@@ -32,6 +31,12 @@ export const Triggers: string[] = ["daudios"];
 export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
   //Delete this command
   _message.delete();
-  _client.RemoteMng.checkIfNewAudios();
-}
 
+  const voiceState = _message.guild?.voice;
+  const voiceConnection = voiceState?.connection;
+  if (!voiceState || !voiceConnection) {
+    return error(`Bot is not connected to any channel in ${_message.guild?.name}`);
+  }
+
+  voiceConnection.dispatcher.destroy();
+}

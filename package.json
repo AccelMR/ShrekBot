@@ -19,9 +19,11 @@
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
     "@types/fs-extra": "^9.0.12",
+    "@types/giphy-api": "^2.0.3",
     "axios": "^0.21.1",
     "discord.js": "^12.5.3",
     "googleapis": "^39.2.0",
+    "queue-typescript": "^1.0.1",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
     "ytdl": "^1.4.1"

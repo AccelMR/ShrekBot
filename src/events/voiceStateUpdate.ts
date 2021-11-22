@@ -30,7 +30,13 @@ export function event(
   _new: Discord.VoiceState
 ) {
   //No case to continue if the user just disconnected or did another action that's not just connect
-  if (!_new.channel || (_old.channel && _old.channel === _new.channel)) { return; }
+  if (!_new.channel) {
+    return;
+  }
+
+  if (_old.channel && _old.channel === _new.channel) {
+    return;
+  }
 
   const resourceManager = _client.ResMng;
 
