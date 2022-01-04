@@ -1,11 +1,12 @@
 /** External Modules */
-import {
+import
+{
   Collection,
   Guild,
   GuildMember,
   Snowflake,
   GuildChannel,
-  Message,
+  ThreadChannel
 } from "discord.js";
 
 /** Own Modules */
@@ -28,37 +29,52 @@ import { ResourceManager } from "../resourceManager";
  *
  * @return {GuildMember} Guild member found by name. Null of no member was find
  */
-export function getMemberByName(
-  _name: string,
-  _client: ShrekBot,
-  _members: Collection<Snowflake, GuildMember>
-): GuildMember | undefined {
+export function getMemberByUserOrNickName(
+  _usrOrNickName: string,
+  _guild: Guild,
+  _client: ShrekBot | undefined
+  //_members: Collection<Snowflake, GuildMember>
+): GuildMember | undefined
+{
+  const Members = _guild.members.cache;
+  let Member: GuildMember | undefined = undefined;
+
+  if (!_client)
+  {
+    Member = Members.find(
+      (member) => member.user.username.toLowerCase() === _usrOrNickName.toLowerCase()
+    );
+    return Member;
+  }
+
   const resourceManager = _client.ResMng;
   const NicksData: Record<string, any> = resourceManager.getJSON("nicks");
 
   let MemberRealName: string = "";
-  let Member: GuildMember | undefined = undefined;
-
-  //TODO probably this function can be reduce and optimized
-  if (NicksData) {
+  if (NicksData)
+  {
     /**
      * Try to find real username by nick, if it does not find it, could be that
      * name sent is actually the real name, so it'll look for it in the nick values
      * if it could not be find then returns from this func
      */
-    if (_name in NicksData) {
+    if (_usrOrNickName in NicksData)
+    {
       //Get real name and then looks for the actual memeber with realName
-      MemberRealName = NicksData[_name];
-    } else {
+      MemberRealName = NicksData[_usrOrNickName];
+    }
+    else
+    {
       const Values = Object.values(NicksData);
-      if (_name in Values) {
-        MemberRealName = Object.keys(NicksData)[Object.values(NicksData).indexOf(_name)];
+      if (_usrOrNickName in Values)
+      {
+        MemberRealName = Object.keys(NicksData)[Object.values(NicksData).indexOf(_usrOrNickName)];
       }
     }
   }
 
-  MemberRealName = MemberRealName === "" ? _name : MemberRealName;
-  Member = _members.find(
+  MemberRealName = MemberRealName === "" ? _usrOrNickName : MemberRealName;
+  Member = Members.find(
     (member) => member.user.username.toLowerCase() === MemberRealName.toLowerCase()
   );
 
@@ -66,7 +82,7 @@ export function getMemberByName(
 }
 
 /**
- * Summary. Get a channel by its name.
+ * Summary. Get any channel by its name inside a given guild.
  * Returns null if no channel is found
  *
  * @access  public
@@ -75,21 +91,24 @@ export function getMemberByName(
  *
  * @param {Guild}   Guild where the channel is.
  *
- * @return {GuildChannel} Channel found by given name
+ * @return {GuildChannel | ThreadChannel | undefined} Channel if found undefined if not.
  */
 export function getChannelByName(
   _channelName: string,
   _guild: Guild
-): GuildChannel | undefined {
+): GuildChannel | ThreadChannel | undefined
+{
   //Find Channel by name, if no Channel is found or no channel was send then it'll return null
-  let FoundChannel: GuildChannel | undefined;
+  let FoundChannel: GuildChannel | ThreadChannel | undefined;
 
-  if (_channelName !== "") {
+  if (_channelName !== "")
+  {
     let GuildChannelManager = _guild.channels;
     FoundChannel = GuildChannelManager.cache.find(
       (Channel) => Channel.name.toLowerCase() === _channelName
     );
-    if (FoundChannel === undefined) {
+    if (FoundChannel === undefined)
+    {
       FoundChannel = undefined;
     }
   }

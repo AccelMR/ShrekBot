@@ -6,18 +6,23 @@
 
 /* External imports */
 import Discord, { GuildMember } from "discord.js";
+import { joinVoiceChannel } from "@discordjs/voice";
 import { getChannelByName } from "../Helpers/discordHelper";
 
 /** Own modules  */
 import { log, error } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
 
+import { Message } from "discord.js";
+
+import { SlashCommandBuilder } from "@discordjs/builders";
+
 //Triggers to call this command
 export const Triggers: string[] = ["join"];
 
 /**
  * Summary.Command to make the bot connect to a certain voice channel.
- *
+ *W
  * @access  public
  *
  * @param {ShrekBot}   Bot Own reference of Shrek bot.
@@ -28,7 +33,9 @@ export const Triggers: string[] = ["join"];
  *
  * @return {void}
  */
-export function run(_client: ShrekBot, _message: Discord.Message, _args: string[]) {
+
+export function run(_client: ShrekBot, _message: Discord.Message, _args: string[])
+{
   //Get username of the one who calle this command
   const userName = _message.author.username;
   const member = _message.member;
@@ -37,7 +44,8 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
 
   let voiceChannel = member?.voice.channel;
 
-  if (_args.length > 0) {
+  if (_args.length > 0)
+  {
     voiceChannel = getChannelByName(_args[0], Guild) as Discord.VoiceChannel;
   }
 
@@ -46,5 +54,13 @@ export function run(_client: ShrekBot, _message: Discord.Message, _args: string[
 
   if (!voiceChannel) return log(`No voice channel found for ${userName}`);
 
-  voiceChannel?.join();
+  const VoiceChannelID = voiceChannel.id;
+  const GuildID = Guild.id;
+  if (!VoiceChannelID || !GuildID) { return; }
+
+  joinVoiceChannel({
+    channelId: VoiceChannelID,
+    guildId: GuildID,
+    adapterCreator: Guild.voiceAdapterCreator
+  });
 }

@@ -8,6 +8,11 @@ export function error(..._message: any) {
   console.error.apply(console, _message);
 }
 
+export function warning(..._message: any) {
+  _message.unshift(getFormatTime() + " ");
+  console.warn.apply(console, _message);
+}
+
 /**
  * Summary. Gives Time as [day-month-year_hours:minutes].
  *

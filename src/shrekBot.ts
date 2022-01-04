@@ -3,35 +3,36 @@ import { config } from "dotenv";
 config();
 
 /* External imports */
-import Discord from "discord.js";
+import { Client, Intents, Message, Collection } from "discord.js";
 import decache from "decache";
 
 import * as path from "path";
 import * as fs from "fs";
 
 /** Internal imports */
-import { log, error } from "./Helpers/helpers";
+import { log, error, warning } from "./Helpers/helpers";
 import { ResourceManager } from "./resourceManager";
-import { Queue } from "queue-typescript";
+
 
 /**
  * Summary. Shrek class where there's all the information needed for the discord client to work
  *
- * Description. This Shrek bot class handles all the global information for events and
+ * Description. This Shrek bot class handles all the global information for events nd
  *              commands to work
  */
-export class ShrekBot {
-  constructor() {
+export class ShrekBot
+{
+  // Constructor
+  constructor()
+  {
     //Init Commands
-    this.m_commands = new Discord.Collection();
- 
+    this.m_commands = new Collection();
+
     //Save managers
     this.m_resourceManager = new ResourceManager();
     this.m_resourceManager.initialize();
-
-    //Init Stack
-    this.m_musicStack = new Queue<Discord.StreamDispatcher>();
   }
+
 
   /* *********************************************************************** */
   /*                              Public                            
@@ -44,9 +45,10 @@ export class ShrekBot {
    *
    * @return {void}
    */
-  initialize() {
+  initialize()
+  {
     //Create discord Client
-    this.m_bot = new Discord.Client();
+    this.m_bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
 
     //Load any other resource needed
     //this.loadResourceManagerData();
@@ -60,6 +62,39 @@ export class ShrekBot {
   }
 
   /**
+   * Summary. Loads events from event folder.
+   * 
+   * @access public
+   * 
+   * @returns {void}
+   */
+  loadEvents()
+  {
+    this.m_bot?.removeAllListeners();
+
+    const EventsPath = "./events/";
+    const FullPath = path.resolve(__dirname, EventsPath);
+
+    const FolderExists = fs.existsSync(FullPath);
+    if (!FolderExists) { error(`${FullPath} does not exist.`); return; }
+
+    const FolderFiles = fs.readdirSync(FullPath);
+
+    for (const File of FolderFiles)
+    {
+      const FilePath = `${FullPath}/${File}`;
+      decache(FilePath);
+      import(FilePath).then((_fileEvent) =>
+      {
+        let EventName = File.split(".")[0];
+        this.m_bot?.on(EventName, _fileEvent.event.bind(null, this));
+        log(`Loaded [${EventName}] event`);
+      });
+    }
+
+  }
+
+ /**
    * Summary. Load all commands.
    *
    * Description. If commands are loaded already, It'll create a symlink to commands to reload them
@@ -73,71 +108,32 @@ export class ShrekBot {
 
     const CommandsPath = "./commands/";
     const FullPath = path.resolve(__dirname, CommandsPath);
- 
-    fs.readdir(FullPath, (err, files) => {
-      if (err) return console.error(err);
 
-      files.forEach((file:string) => {
-        const FilePath = `${FullPath}/${file}`;
-        decache(FilePath); 
-        import(FilePath).then((_fileCommand) => {
-          let commandTriggers: string[] = _fileCommand.Triggers;
+    const FolderExists = fs.existsSync(FullPath);
+    if (!FolderExists) { error(`${FullPath} does not exist.`); }
 
-          commandTriggers.forEach((_trigger) => {
-            this.m_commands.set(_trigger, _fileCommand.run);
-          });
+    const FolderFiles = fs.readdirSync(FullPath);
 
-          log(`Loaded [${file}] file as command`);
-        });
+    for (const File of FolderFiles)
+    {
+      const FilePath = `${FullPath}/${File}`;
+      decache(FilePath); 
+      import(FilePath).then((_fileCommand) => {
+        let CommandTriggers: string[] = _fileCommand.Triggers;
+
+        for (const Trigger of CommandTriggers) {
+          this.m_commands.set(Trigger, _fileCommand.run);
+        }
+
+        log(`Loaded [${File}] file as command`);
       });
-    });
+    }
   }
 
-  /**
-   * Summary. Load all events.
-   *
-   * Description. If events are loaded already, It'll create a symlink to events to reload them
-   *
-   * @access  private
-   *
-   * @return {void}
-   */
-  loadEvents(): void {
-    // var _this = this;
-    this.m_bot?.removeAllListeners();
 
-    const EventsPath = "./events/";
-    const FullPath = path.resolve(__dirname, EventsPath);
-
-    fs.readdir(FullPath, (err, files) => {
-      if (err) return console.error(err);
-
-      files.forEach((file) => {
-        const FilePath = `${FullPath}/${file}`;
-        decache(FilePath);
-        import(FilePath).then((_fileEvent) => {
-          let eventName = file.split(".")[0];
-          this.m_bot?.on(eventName, _fileEvent.event.bind(null, this));
-          log(`Loaded [${eventName}] event`);
-        });
-      });
-    });
-  }
-
-  /****************************************************************************/
-  /*                               Getters      										        	*/
-  /****************************************************************************/
-
-  /**
-   * Summary. Returns the Discord Client.
-   *
-   * @access  public
-   *
-   * @return {Discord.Client} Discord Client initialized
-   */
-  get Bot() {
-    return this.m_bot;
-  }
+/****************************************************************************/
+/*                               Getters      										        	*/
+/****************************************************************************/
 
   /**
    * Summary. Returns all the commands attached with this Bot.
@@ -146,34 +142,37 @@ export class ShrekBot {
    *
    * @return {Discord.Collection<string, Function>} collection of commands
    */
-  get Commands() {
+  get Commands(){
     return this.m_commands;
   }
 
-  /**
+ /**
+   * Summary. Returns the Discord Client.
+   *
+   * @access  public
+   *
+   * @return {Discord.Client} Discord Client initialized
+   */
+  get Bot()
+  {
+    return this.m_bot;
+  }
+
+ /**
    * Summary. Returns global resource manager.
    *
    * @access  public
    *
    * @return {ResourceManager} global Resource manager
    */
-  get ResMng(): ResourceManager {
-    return this.m_resourceManager;
+  get ResMng()
+  {
+       return this.m_resourceManager;
   }
 
-  /* *********************************************************************** */
-  /*                              Properties                            
-  /* *********************************************************************** */
-
-  /**
-   * Stack where the music is saved.
-   *
-   * @access private
-   *
-   * @member   {Queue<Discord.StreamDispatcher>} m_musicStack
-   * @memberof shrekBot
-   */
-  private m_musicStack: Queue<Discord.StreamDispatcher>;
+/* *********************************************************************** */
+/*                              Properties                            
+/* *********************************************************************** */
 
   /**
    * Discord Client for shrek bot.
@@ -183,48 +182,20 @@ export class ShrekBot {
    * @member   {Discord.Client} m_bot
    * @memberof ShrekBot
    */
-  private m_bot?: Discord.Client;
+  private m_bot?: Client;
 
-  /**
-   * How many times evens have laoded.
-   *
-   * @access private
-   *
-   * @member   {int} m_eventReloadedI
-   * @memberof shrekBot
-   */
-  private m_eventReloadI: number = 0;
 
-  /**
-   * How many times commands have loaded.
-   *
-   * @access private
-   *
-   * @member   {int} m_commandReloadI
-   * @memberof shrekBot
-   */
-  private m_commandReloadI: number = 0;
+  //Reference to resource and remote managers
+  private m_resourceManager: ResourceManager;
 
   /**
    * All the commands this bot can execute.
    *
    * @access private
    *
-   * @member   {Discord.Collection<string, Function>} Commands
+   * @member   {Discord.Collection<string, (_client: ShrekBot, _message: Message, _args: string[])=>{}>} Commands
    * @memberof shrekBot
    */
-  private m_commands: Discord.Collection<string, Function>;
+  private m_commands: Collection<string, (_client: ShrekBot, _message: Message, _args: string[])=>{}>;
 
-  /**
-   * Current dispatcher if there's one.
-   *
-   * @access private
-   *
-   * @member   {Discord.StreamDispatcher} m_dispatcher
-   * @memberof shrekBot
-   */
-  private m_dispatcher?: Discord.StreamDispatcher;
-
-  //Reference to resource and remote managers
-  private m_resourceManager: ResourceManager;
 }
