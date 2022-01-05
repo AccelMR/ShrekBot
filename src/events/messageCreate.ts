@@ -14,8 +14,6 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   }
   const Config = resourceManager.Config;
   const GuildID = Guild.id;
- 
-
 
   // Ignore all bots
   if (_message.author.bot) return;
@@ -48,7 +46,7 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   }
 
   //Take the [0] arg which is the actual command
-  const CommandName = Args.shift();
+  const CommandName = Args.shift()?.toLocaleLowerCase();
   if (!CommandName) { return; }
 
   // Grab the command data from the client.commands map
@@ -57,11 +55,13 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   // If that command doesn't exist, silently exit and do nothing
   if (!Command) {
     _client.logIntoGuildFile(GuildID, `Command ${CommandName} not found.`);
+    _message.delete();
     return;
   }
 
   // Try To run command
   try{
+    _client.logIntoGuildFile(GuildID, `Trying to execute command ${CommandName}() by ${_message.member?.user.username}`);
     Command(_client, _message, Args);
   }
   catch(_err){

@@ -138,7 +138,7 @@ export class ShrekBot
 
         for (const Trigger of CommandTriggers)
         {
-          this.m_commands.set(Trigger, _fileCommand.run);
+          this.m_commands.set(Trigger.toLocaleLowerCase(), _fileCommand.run);
         }
 
         console.log(`Loaded [${File}] file as command`);
@@ -178,6 +178,17 @@ export class ShrekBot
     }
 
     return this.m_Players.get(_guildID);
+  }
+
+
+  /**
+   * 
+   * @param _guildID Returns a specific logger if there is one for the guild.
+   * @returns ShrekLogger if there is one, undefined if not.
+   */
+  getLogger(_guildID: string)
+  {
+    return this.m_loggers.get(_guildID);
   }
 
   /**
@@ -230,7 +241,10 @@ export class ShrekBot
    */
   forceSaveLoggers()
   {
-    this.m_loggers.forEach(Logger => Logger.forceSave());
+    for (const [Key, Logger] of this.m_loggers)
+    {
+      Logger.forceSave();
+    }
   }
 
   /**

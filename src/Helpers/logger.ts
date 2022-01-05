@@ -1,11 +1,11 @@
-import { getFormatTime } from "./helpers";
+import { getFormatDate, getFormatTime } from "./helpers";
 import * as fs from "fs";
 
 enum LogType
 {
-    INFO,
-    ERROR,
-    WARNING
+    INFO = "INFO",
+    ERROR = "ERROR",
+    WARNING = "WARNING"
 }
 
 export class ShrekLogger
@@ -18,6 +18,8 @@ export class ShrekLogger
     constructor(_loggerName: string) 
     {
         this.m_loggerName = _loggerName;
+
+        this.m_loggerPath = `${process.env.LOGGER_PATH}${this.m_loggerName}_${getFormatDate()}.txt`;
     }
 
     log(_message: string)
@@ -26,9 +28,9 @@ export class ShrekLogger
 
         if (this.m_debugMode)
         {
-            const DateStyle = "color: #ffffff";
+            const DateStyle = "color: #FFFFFF";
             const DateInfo = `${getFormatTime()}\tINFO`;
-            console.log(`%c${DateInfo}`, DateStyle, _message);
+            console.log(`%c[${DateInfo}]`, DateStyle, _message);
         }
 
     }
@@ -40,9 +42,9 @@ export class ShrekLogger
 
         if (this.m_debugMode)
         {
-            const DateStyle = "color: #ff00ff";
-            const DateInfo = `${getFormatTime()}\tWARNING`;
-            console.error(`%c${DateInfo}`, DateStyle, _message);
+            const DateStyle = "color: #FF0000";
+            const DateInfo = `${getFormatTime()}\tERROR`;
+            console.error(`%c[${DateInfo}]`, DateStyle, _message);
         }
     }
 
@@ -52,9 +54,9 @@ export class ShrekLogger
 
         if (this.m_debugMode)
         {
-            const DateStyle = "color: #bada55";
+            const DateStyle = "color: #FFFF00";
             const DateInfo = `${getFormatTime()}\tERROR`;
-            console.warn(`%c${DateInfo}`, DateStyle, _message);
+            console.warn(`%c[${DateInfo}]`, DateStyle, _message);
         }
     }
 
@@ -65,12 +67,9 @@ export class ShrekLogger
      */
     forceSave()
     {
-        const LoggerPath = `${process.env.LOGGER_PATH}${this.m_loggerName}.txt`;
-        if (!LoggerPath) { return; }
-
         const MessageSingleLine = this.m_log.join("\n");
 
-        fs.writeFileSync(LoggerPath, MessageSingleLine);
+        fs.appendFileSync(this.m_loggerPath, MessageSingleLine);
 
         //clear the logger
         this.m_log = [];
@@ -85,7 +84,7 @@ export class ShrekLogger
     {
         const TypeName = _type.toString();
         const DateInfo = getFormatTime();
-        const FixedMessage = `${DateInfo}\t[${TypeName}]\t${_message}`;
+        const FixedMessage = `[${DateInfo}]\t[${TypeName}]\t${_message}`;
 
         this.m_log.push(FixedMessage);
 
@@ -94,6 +93,14 @@ export class ShrekLogger
         {
             this.forceSave();
         }
+    }
+
+    /**
+     * Return the path of this logger.
+     */
+    get LoggerPath()
+    {
+        return this.m_loggerPath;
     }
 
     /**
@@ -107,4 +114,6 @@ export class ShrekLogger
     private m_log: string[] = [];
 
     private m_timesToSave: number = 10;
+
+    private m_loggerPath: string;
 }

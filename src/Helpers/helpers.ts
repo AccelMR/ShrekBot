@@ -30,7 +30,28 @@ export function getFormatTime(): string
 
   const FixedSec = (seconds / 10 < 0) ? `0${seconds}` : seconds;
 
-  return (`[${day}-${month}-${year}_${hours}:${minutes}:${FixedSec}]`);
+  return (`${day}-${month}-${year}_${hours}:${minutes}:${FixedSec}`);
+}
+
+/**
+ * Summary. Get the date as string.
+ * 
+ * @returns A Formatted date as day-month-year
+ */
+export function getFormatDate(): string
+{
+  const date_ob = new Date();
+  // current date
+  // adjust 0 before single digit date
+  const day = ("0" + date_ob.getDate()).slice(-2);
+
+  // current month
+  const month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+
+  // current year
+  const year = date_ob.getFullYear();
+
+  return (`${day}-${month}-${year}`);
 }
 
 // Checks if string can be converted to int if Nan is found then it'll return
