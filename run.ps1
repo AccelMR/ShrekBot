@@ -1,1 +1,1 @@
-node dist/src/main.js
+ts-node src/main.ts
