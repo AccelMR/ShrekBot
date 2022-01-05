@@ -2,7 +2,6 @@
 import Discord from "discord.js";
 
 /** Own Modules */
-import { log } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
 
 /**
@@ -17,5 +16,7 @@ import { ShrekBot } from "../shrekBot";
  * @return {void}
  */
 export const event = (_client: ShrekBot, _message: Discord.Message) => {
-  log("Shrek bot has connected!");
+  console.log("Shrek bot is ready!");
+
+  _client._onBotReady();
 };

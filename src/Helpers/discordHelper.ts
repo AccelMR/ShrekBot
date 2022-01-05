@@ -11,8 +11,8 @@ import
 
 /** Own Modules */
 import { ShrekBot } from "../shrekBot";
-import { error } from "./helpers";
-import { ResourceManager } from "../resourceManager";
+import { getVoiceConnection, createAudioResource } from "@discordjs/voice";
+import { createReadStream, lstatSync } from "fs";
 
 /**
  * Summary. Find a member with given name/nick.
@@ -114,4 +114,37 @@ export function getChannelByName(
   }
 
   return FoundChannel;
+}
+
+
+
+export function playSound(
+  _client: ShrekBot,
+  _soundPath: string,
+  _guildID: string)
+{
+ 
+
+  const AudioConnection = getVoiceConnection(_guildID);
+  if (!AudioConnection)
+  {
+    _client.errorIntoGuildFile(_guildID, `playSound() was called but there is no VoiceConnection in Guild ${_guildID}`);
+    return;
+  }
+
+  const Stats = lstatSync(_soundPath);
+  if (!Stats.isFile())
+  {
+    _client.errorIntoGuildFile(_guildID, `The provided path "${_soundPath}" does not exist.`);
+    return;
+  }
+
+  const AudioStream = createReadStream(_soundPath);
+  const AudioResource = createAudioResource(AudioStream);
+
+  const Player = _client.getPlayer(_guildID);
+
+  _client.logIntoGuildFile(_guildID, `Playing sound from "${_soundPath}"`);
+
+  Player?.play(AudioResource);
 }

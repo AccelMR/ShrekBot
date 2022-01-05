@@ -3,15 +3,16 @@ import { config } from "dotenv";
 config();
 
 /* External imports */
-import { Client, Intents, Message, Collection } from "discord.js";
+import { Client, Intents, Message, Collection, Guild } from "discord.js";
 import decache from "decache";
 
 import * as path from "path";
 import * as fs from "fs";
 
 /** Internal imports */
-import { log, error, warning } from "./Helpers/helpers";
 import { ResourceManager } from "./resourceManager";
+import { AudioPlayer } from "@discordjs/voice";
+import { ShrekLogger } from "./Helpers/logger";
 
 
 /**
@@ -27,10 +28,13 @@ export class ShrekBot
   {
     //Init Commands
     this.m_commands = new Collection();
+    this.m_Players = new Collection();
 
     //Save managers
     this.m_resourceManager = new ResourceManager();
     this.m_resourceManager.initialize();
+
+    this.m_loggers = new Map<string, ShrekLogger>();
   }
 
 
@@ -48,7 +52,16 @@ export class ShrekBot
   initialize()
   {
     //Create discord Client
-    this.m_bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
+    this.m_bot = new Client(
+      {
+        intents: [
+          Intents.FLAGS.GUILDS,
+          Intents.FLAGS.GUILD_MESSAGES,
+          Intents.FLAGS.GUILD_MEMBERS,
+          Intents.FLAGS.GUILD_PRESENCES,
+          Intents.FLAGS.GUILD_VOICE_STATES,
+        ]
+      });
 
     //Load any other resource needed
     //this.loadResourceManagerData();
@@ -76,7 +89,7 @@ export class ShrekBot
     const FullPath = path.resolve(__dirname, EventsPath);
 
     const FolderExists = fs.existsSync(FullPath);
-    if (!FolderExists) { error(`${FullPath} does not exist.`); return; }
+    if (!FolderExists) { console.error(`${FullPath} does not exist.`); return; }
 
     const FolderFiles = fs.readdirSync(FullPath);
 
@@ -88,52 +101,160 @@ export class ShrekBot
       {
         let EventName = File.split(".")[0];
         this.m_bot?.on(EventName, _fileEvent.event.bind(null, this));
-        log(`Loaded [${EventName}] event`);
+        console.log(`Loaded [${EventName}] event`);
       });
     }
 
   }
 
- /**
-   * Summary. Load all commands.
-   *
-   * Description. If commands are loaded already, It'll create a symlink to commands to reload them
-   *
-   * @access  public
-   *
-   * @return {void}
-   */
-  loadCommands() {
+  /**
+    * Summary. Load all commands.
+    *
+    * Description. If commands are loaded already, It'll create a symlink to commands to reload them
+    *
+    * @access  public
+    *
+    * @return {void}
+    */
+  loadCommands()
+  {
     this.m_commands.clear();
 
     const CommandsPath = "./commands/";
     const FullPath = path.resolve(__dirname, CommandsPath);
 
     const FolderExists = fs.existsSync(FullPath);
-    if (!FolderExists) { error(`${FullPath} does not exist.`); }
+    if (!FolderExists) { console.error(`${FullPath} does not exist.`); }
 
     const FolderFiles = fs.readdirSync(FullPath);
 
     for (const File of FolderFiles)
     {
       const FilePath = `${FullPath}/${File}`;
-      decache(FilePath); 
-      import(FilePath).then((_fileCommand) => {
+      decache(FilePath);
+      import(FilePath).then((_fileCommand) =>
+      {
         let CommandTriggers: string[] = _fileCommand.Triggers;
 
-        for (const Trigger of CommandTriggers) {
+        for (const Trigger of CommandTriggers)
+        {
           this.m_commands.set(Trigger, _fileCommand.run);
         }
 
-        log(`Loaded [${File}] file as command`);
+        console.log(`Loaded [${File}] file as command`);
       });
     }
   }
 
+  /**
+   * Summary. Adds a Player to given Guild, if a Player already exists then it'll override it.
+   * 
+   * @param _guildID {string} Guild ID where to save the Player.
+   * 
+   * @param _player {AudioPlayer} The Player for a Guild to play audios.
+   */
+  addPlayer(_guildID: string, _player: AudioPlayer)
+  {
+    if (this.m_Players.has(_guildID))
+    {
+      console.warn(`This "${_guildID}" already had a Player, a new one was created.`);
+    }
 
-/****************************************************************************/
-/*                               Getters      										        	*/
-/****************************************************************************/
+    this.m_Players.set(_guildID, _player);
+  }
+
+  /**
+   * Saummary. Checks if Player exists for this Guild and return it.
+   * 
+   * @param _guildID {string} The Guild ID where to get the Player.
+   * 
+   * @returns {AudioPlayer} The found Audio player, undefined if none is found.
+   */
+  getPlayer(_guildID: string): AudioPlayer | undefined
+  {
+    if (!this.m_Players.has(_guildID))
+    {
+      console.warn(`This "${_guildID}" does not have a Player attached.`);
+    }
+
+    return this.m_Players.get(_guildID);
+  }
+
+  /**
+   * Summary. Loggs info into the Guild file.
+   * 
+   * @param _guildID ID of the guild where the message came from.
+   * @param _message Message to be logged.
+   * @returns 
+   */
+  logIntoGuildFile(_guildID: string, _message: string)
+  {
+    const Logger = this.m_loggers.get(_guildID);
+    if (!Logger) { return; }
+
+    Logger.log(_message);
+  }
+
+  /**
+   * Summary. Loggs errors into the Guild file.
+   * 
+   * @param _guildID ID of the guild where the message came from.
+   * @param _message Message to be logged.
+   * @returns 
+   */
+  errorIntoGuildFile(_guildID: string, _message: string)
+  {
+    const Logger = this.m_loggers.get(_guildID);
+    if (!Logger) { return; }
+
+    Logger.error(_message);
+  }
+
+  /**
+   * Summary. Loggs warnings into the Guild file.
+   * 
+   * @param _guildID ID of the guild where the message came from.
+   * @param _message Message to be logged.
+   * @returns 
+   */
+  warningIntoGuildFile(_guildID: string, _message: string)
+  {
+    const Logger = this.m_loggers.get(_guildID);
+    if (!Logger) { return; }
+
+    Logger.warning(_message);
+  }
+
+  /**
+   * Summary. orces to save all loggers.
+   */
+  forceSaveLoggers()
+  {
+    this.m_loggers.forEach(Logger => Logger.forceSave());
+  }
+
+  /**
+   * Summary. DO NOT CALL THIS FUNCTION. This function gets called by a ready event.
+   */
+  _onBotReady()
+  {
+    const Guilds = this.Bot?.guilds.cache;
+    Guilds?.each(Guild => this._addnewLogger(Guild));
+  }
+
+
+  /****************************************************************************/
+  /*                               Private      										        	*/
+  /****************************************************************************/
+  private _addnewLogger(_guild: Guild)
+  {
+    this.m_loggers.set(_guild.id, new ShrekLogger(_guild.name));
+  }
+
+
+  /****************************************************************************/
+  /*                               Getters      										        	*/
+  /****************************************************************************/
 
   /**
    * Summary. Returns all the commands attached with this Bot.
@@ -142,37 +263,38 @@ export class ShrekBot
    *
    * @return {Discord.Collection<string, Function>} collection of commands
    */
-  get Commands(){
+  get Commands()
+  {
     return this.m_commands;
   }
 
- /**
-   * Summary. Returns the Discord Client.
-   *
-   * @access  public
-   *
-   * @return {Discord.Client} Discord Client initialized
-   */
+  /**
+    * Summary. Returns the Discord Client.
+    *
+    * @access  public
+    *
+    * @return {Discord.Client} Discord Client initialized
+    */
   get Bot()
   {
     return this.m_bot;
   }
 
- /**
-   * Summary. Returns global resource manager.
-   *
-   * @access  public
-   *
-   * @return {ResourceManager} global Resource manager
-   */
+  /**
+    * Summary. Returns global resource manager.
+    *
+    * @access  public
+    *
+    * @return {ResourceManager} global Resource manager
+    */
   get ResMng()
   {
-       return this.m_resourceManager;
+    return this.m_resourceManager;
   }
 
-/* *********************************************************************** */
-/*                              Properties                            
-/* *********************************************************************** */
+  /* *********************************************************************** */
+  /*                              Properties                            
+  /* *********************************************************************** */
 
   /**
    * Discord Client for shrek bot.
@@ -196,6 +318,11 @@ export class ShrekBot
    * @member   {Discord.Collection<string, (_client: ShrekBot, _message: Message, _args: string[])=>{}>} Commands
    * @memberof shrekBot
    */
-  private m_commands: Collection<string, (_client: ShrekBot, _message: Message, _args: string[])=>{}>;
+  private m_commands: Collection<string, (_client: ShrekBot, _message: Message, _args: string[]) => {}>;
+
+
+  private m_Players: Collection<string, AudioPlayer>;
+
+  private m_loggers: Map<string, ShrekLogger>;
 
 }

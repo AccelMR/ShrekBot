@@ -1,17 +1,4 @@
-export function log(..._message: any[]): void {
-  _message.unshift(getFormatTime() + " ");
-  console.log.apply(console, _message);
-}
 
-export function error(..._message: any) {
-  _message.unshift(getFormatTime() + " ");
-  console.error.apply(console, _message);
-}
-
-export function warning(..._message: any) {
-  _message.unshift(getFormatTime() + " ");
-  console.warn.apply(console, _message);
-}
 
 /**
  * Summary. Gives Time as [day-month-year_hours:minutes].
@@ -20,33 +7,36 @@ export function warning(..._message: any) {
  *
  * @return {string} Returns the current time formatted
  */
-export function getFormatTime(): string {
-  let date_ob = new Date();
+export function getFormatTime(): string
+{
+  const date_ob = new Date();
   // current date
   // adjust 0 before single digit date
-  let day = ("0" + date_ob.getDate()).slice(-2);
+  const day = ("0" + date_ob.getDate()).slice(-2);
 
   // current month
-  let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+  const month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
 
   // current year
-  let year = date_ob.getFullYear();
+  const year = date_ob.getFullYear();
 
   // current hours
-  let hours = date_ob.getHours();
+  const hours = date_ob.getHours();
 
   // current minutes
-  let minutes = date_ob.getMinutes();
+  const minutes = date_ob.getMinutes();
 
-  // current seconds
-  //let seconds = date_ob.getSeconds();
+  const seconds = date_ob.getSeconds();
 
-  return "[" + day + "-" + month + "-" + year + "_" + hours + ":" + minutes + "]";
+  const FixedSec = (seconds / 10 < 0) ? `0${seconds}` : seconds;
+
+  return (`[${day}-${month}-${year}_${hours}:${minutes}:${FixedSec}]`);
 }
 
 // Checks if string can be converted to int if Nan is found then it'll return
 // a default value. Default = 0
-export function getInteger(_stringVal: string, _default = 0): number {
+export function getInteger(_stringVal: string, _default = 0): number
+{
   let intValue = parseInt(_stringVal);
   return isNaN(intValue) ? _default : intValue;
 }
@@ -54,8 +44,10 @@ export function getInteger(_stringVal: string, _default = 0): number {
 /* *********************************************************************** */
 /*                            Typescript helpers                            
 /* *********************************************************************** */
-declare global {
-  interface Number {
+declare global
+{
+  interface Number
+  {
     clamp: (min: number, max: number) => number;
   }
 }
@@ -71,6 +63,7 @@ declare global {
  * @returns A number in the range [min, max]
  * @type Number
  */
-Number.prototype.clamp = function (min: number, max: number): number {
+Number.prototype.clamp = function (min: number, max: number): number
+{
   return Math.min(Math.max(this.valueOf(), min), max);
 };

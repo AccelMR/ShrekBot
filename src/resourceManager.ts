@@ -2,9 +2,6 @@
 import * as path from "path";
 import * as fs from "fs";
 
-/** Own modules */
-import { log, error } from "./Helpers/helpers";
-
 //Interface of how the Resource Manager should be handled
 export interface Resource
 {
@@ -49,7 +46,7 @@ export class ResourceManager
   {
     const FullPath = this.m_jsonResourcesPath;
     const FolderExists = fs.existsSync(FullPath);
-    if (!FolderExists) { error(`${FullPath} does not exist.`); return; }
+    if (!FolderExists) { console.error(`${FullPath} does not exist.`); return; }
 
     const FolderFiles = fs.readdirSync(FullPath);
 
@@ -63,7 +60,7 @@ export class ResourceManager
         fs.readFileSync(`${this.m_jsonResourcesPath}/${File}`, "utf8")
       );
 
-      log(`Loaded [${FileName}] in Resource Manager`);
+      console.log(`Loaded [${FileName}] in Resource Manager`);
     }
   }
 
@@ -98,7 +95,7 @@ export class ResourceManager
     }
 
     const message = `Theres no ${_name} in Resource Manager.`;
-    error(message);
+    console.error(message);
     return { ["error"]: message };
   }
 
