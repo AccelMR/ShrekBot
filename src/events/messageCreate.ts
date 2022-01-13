@@ -18,11 +18,6 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   // Ignore all bots
   if (_message.author.bot) return;
 
-  /**
-   * check if it has mentioned the bot
-   */
-  const Mentions = _message.mentions;
-
   /* *********************************************************************** */
   /*                              Commands                            
   /* *********************************************************************** */
@@ -62,7 +57,7 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   // Try To run command
   try{
     _client.logIntoGuildFile(GuildID, `Trying to execute command ${CommandName}() by ${_message.member?.user.username}`);
-    Command(_client, _message, Args);
+    Command?.run(_client, _message, Args);
   }
   catch(_err){
     _client.errorIntoGuildFile(GuildID, `Error reported trying to execute command "${CommandName}", ${_err}`);

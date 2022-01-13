@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.18",
+    "@types/request": "^2.48.8",
     "decache": "^4.6.0",
     "dotenv": "^10.0.0",
     "ts-node": "^10.4.0",

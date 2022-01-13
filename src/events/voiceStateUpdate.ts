@@ -5,12 +5,12 @@
  */
 
 /* External imports */
-import Discord, { BaseGuildVoiceChannel } from "discord.js";
+import { BaseGuildVoiceChannel, VoiceState } from "discord.js";
 
 /** Own Modules */
 import { ShrekBot } from "../shrekBot";
-import { createAudioPlayer, getVoiceConnection, joinVoiceChannel, VoiceConnection } from "@discordjs/voice";
-import { playSound } from "../Helpers/discordHelper";
+import { createAudioPlayer, DiscordGatewayAdapterCreator, getVoiceConnection, joinVoiceChannel } from "@discordjs/voice";
+import { playSoundFromFile } from "../Helpers/discordHelper";
 /**
  * Summary. Event when voice State changes.
  *
@@ -26,8 +26,8 @@ import { playSound } from "../Helpers/discordHelper";
  */
 export function event(
   _client: ShrekBot,
-  _old: Discord.VoiceState,
-  _new: Discord.VoiceState
+  _old: VoiceState,
+  _new: VoiceState
 )
 {
   const Guild = _new.guild;
@@ -38,7 +38,7 @@ export function event(
   //No case to continue if the user just disconnected or did another action that's not just connect
   if (!_new.channel)
   {
-    _client.logIntoGuildFile(GuildID, `${_old.member?.user.username} just disconnected ${_old.channel?.name}`);
+    _client.logIntoGuildFile(GuildID, `${_old.member?.user.username} left ${_old.channel?.name}`);
     return;
   }
 
@@ -50,8 +50,8 @@ export function event(
   }
 
   const BotID = Bot.user.id;
-  const BotVoiceAdapter = _new.guild.voiceAdapterCreator;
   const UserID = _new.member?.user.id;
+  const UserName = _new.member?.user.username;
 
   if (!UserID) 
   {
@@ -73,17 +73,16 @@ export function event(
 
   let AudioConnection = getVoiceConnection(GuildID);
   const VoiceChannelID = _new.channel.id;
-
   //If Connection does not exist then Bot joins the channel.
   if (!AudioConnection)
   {
     AudioConnection = joinVoiceChannel({
       channelId: VoiceChannelID,
       guildId: GuildID,
-      adapterCreator: BotVoiceAdapter
+      adapterCreator: _new.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator //TODO: this does not have yo be any but Discord and Discord Voice don't match types
     });
 
-    //Register this player
+    //Register this User
     const Player = createAudioPlayer();
     _client.addPlayer(GuildID, Player);
 
@@ -107,14 +106,20 @@ export function event(
           return;
         }
 
+        if (!SoundsData[UserID])
+        {
+          _client.warningIntoGuildFile(GuildID, `There is no sound for ${UserName}.`);
+          return;
+        }
+
         const Sound = SoundsData[UserID][GuildID] ?? SoundsData[UserID].default;
         const AudioPath = `${process.env.SOUND_LOCAL_PATH}${Sound}.mp3`;
-        playSound(_client, AudioPath, GuildID);
+        playSoundFromFile(_client, AudioPath, GuildID);
       }
     });
 }
 
-function checkStates(_new: Discord.VoiceState, _old: Discord.VoiceState): boolean
+function checkStates(_new: VoiceState, _old: VoiceState): boolean
 {
   if (_old.mute && !_new.mute || !_old.mute && _new.mute) { return false; }
   if (_old.deaf && !_new.deaf || !_old.deaf && _new.deaf) { return false; }

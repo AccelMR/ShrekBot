@@ -55,7 +55,7 @@ export class ShrekLogger
         if (this.m_debugMode)
         {
             const DateStyle = "color: #FFFF00";
-            const DateInfo = `${getFormatTime()}\tERROR`;
+            const DateInfo = `${getFormatTime()}\tWARNING`;
             console.warn(`%c[${DateInfo}]`, DateStyle, _message);
         }
     }
@@ -67,7 +67,7 @@ export class ShrekLogger
      */
     forceSave()
     {
-        const MessageSingleLine = this.m_log.join("\n");
+        const MessageSingleLine = this.m_log.join("\n") + "\n";
 
         fs.appendFileSync(this.m_loggerPath, MessageSingleLine);
 

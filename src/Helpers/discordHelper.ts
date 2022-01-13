@@ -1,18 +1,17 @@
 /** External Modules */
 import
 {
-  Collection,
   Guild,
   GuildMember,
-  Snowflake,
   GuildChannel,
   ThreadChannel
 } from "discord.js";
+import { getVoiceConnection, createAudioResource } from "@discordjs/voice";
 
 /** Own Modules */
 import { ShrekBot } from "../shrekBot";
-import { getVoiceConnection, createAudioResource } from "@discordjs/voice";
 import { createReadStream, lstatSync } from "fs";
+import { ParameterDetails } from "./baseCommand";
 
 /**
  * Summary. Find a member with given name/nick.
@@ -30,7 +29,7 @@ import { createReadStream, lstatSync } from "fs";
  * @return {GuildMember} Guild member found by name. Null of no member was find
  */
 export function getMemberByUserOrNickName(
-  _usrOrNickName: string,
+  _UsrNickOrID: string,
   _guild: Guild,
   _client: ShrekBot | undefined
   //_members: Collection<Snowflake, GuildMember>
@@ -38,47 +37,29 @@ export function getMemberByUserOrNickName(
 {
   const Members = _guild.members.cache;
   let Member: GuildMember | undefined = undefined;
+  const FixedUserOrNick = _UsrNickOrID.toLocaleLowerCase();
 
   if (!_client)
   {
-    Member = Members.find(
-      (member) => member.user.username.toLowerCase() === _usrOrNickName.toLowerCase()
+    //If no client it means there isn't a Nick DB so we look for the name as username or as id.
+    return Members.find(
+      (member) => member.user.username.toLowerCase() === FixedUserOrNick || member.user.id.toLowerCase() === FixedUserOrNick
     );
-    return Member;
   }
 
-  const resourceManager = _client.ResMng;
-  const NicksData: Record<string, any> = resourceManager.getJSON("nicks");
+  const NicksData: Record<string, any> = _client.ResMng.getJSON("nicks");
 
-  let MemberRealName: string = "";
-  if (NicksData)
+  let MemberID: string = "";
+  if (!NicksData || !(_UsrNickOrID in NicksData))
   {
-    /**
-     * Try to find real username by nick, if it does not find it, could be that
-     * name sent is actually the real name, so it'll look for it in the nick values
-     * if it could not be find then returns from this func
-     */
-    if (_usrOrNickName in NicksData)
-    {
-      //Get real name and then looks for the actual memeber with realName
-      MemberRealName = NicksData[_usrOrNickName];
-    }
-    else
-    {
-      const Values = Object.values(NicksData);
-      if (_usrOrNickName in Values)
-      {
-        MemberRealName = Object.keys(NicksData)[Object.values(NicksData).indexOf(_usrOrNickName)];
-      }
-    }
+    _client.errorIntoGuildFile(_guild.id, `${_UsrNickOrID} was bot found in the Nick json.`);
+    return undefined;
   }
 
-  MemberRealName = MemberRealName === "" ? _usrOrNickName : MemberRealName;
-  Member = Members.find(
-    (member) => member.user.username.toLowerCase() === MemberRealName.toLowerCase()
+  MemberID = NicksData[_UsrNickOrID];
+  return Member = Members.find(
+    (member) => member.user.id === MemberID
   );
-
-  return Member;
 }
 
 /**
@@ -116,27 +97,32 @@ export function getChannelByName(
   return FoundChannel;
 }
 
-
-
-export function playSound(
+/**
+ * 
+ * @param _client Shrek bot reference.  
+ * @param _soundPath Complete path to the mp3 sound.
+ * @param _guildID Guild ID where is going to be played.
+ * @returns {boolean} If the sound could be played
+ */
+export function playSoundFromFile(
   _client: ShrekBot,
   _soundPath: string,
   _guildID: string)
 {
- 
+
 
   const AudioConnection = getVoiceConnection(_guildID);
   if (!AudioConnection)
   {
-    _client.errorIntoGuildFile(_guildID, `playSound() was called but there is no VoiceConnection in Guild ${_guildID}`);
-    return;
+    _client.errorIntoGuildFile(_guildID, `playSoundFromFile() was called but there is no VoiceConnection in Guild ${_guildID}`);
+    return false;
   }
 
   const Stats = lstatSync(_soundPath);
   if (!Stats.isFile())
   {
     _client.errorIntoGuildFile(_guildID, `The provided path "${_soundPath}" does not exist.`);
-    return;
+    return false;
   }
 
   const AudioStream = createReadStream(_soundPath);
@@ -147,4 +133,25 @@ export function playSound(
   _client.logIntoGuildFile(_guildID, `Playing sound from "${_soundPath}"`);
 
   Player?.play(AudioResource);
+  return true;
+}
+
+/**
+ * Checks the lenght of the args and the mandatory parameters in ParamDetails, if they match true is returned.
+ * 
+ * @param _args Arguments got in the run command.
+ * @param _paramDetails Param details of the command.
+ * @returns {boolean} true if Arguments are correct.
+ */
+export function checkParamLenght(_args: string[], _paramDetails: ParameterDetails[]): boolean
+{
+  let NumMandatoryParams: number = 0;
+  for (const Param of _paramDetails)
+  {
+    if (!Param.Optional)
+    {
+      NumMandatoryParams++;
+    }
+  }
+  return _args.length >= NumMandatoryParams;
 }

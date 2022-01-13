@@ -1,4 +1,5 @@
-
+import * as fs from "fs";
+import * as request from "request";
 
 /**
  * Summary. Gives Time as [day-month-year_hours:minutes].
@@ -88,3 +89,22 @@ Number.prototype.clamp = function (min: number, max: number): number
 {
   return Math.min(Math.max(this.valueOf(), min), max);
 };
+
+/**
+ * Summary. Checks if the sound exist in sound folder.
+ * 
+ * @param _soundName Sound name.
+ * @returns {boolean}
+ */
+export function soundExist(_soundName: string): boolean
+{
+  const Path = `${process.env.SOUND_LOCAL_PATH}${_soundName}.mp3`;
+  return fs.existsSync(Path);
+}
+
+export function downloadFromURL(_url: string, _fileNameExt: string)
+{
+  request.get(_url)
+    .on('error', console.error)
+    .pipe(fs.createWriteStream(`${process.env.SOUND_LOCAL_PATH}${_fileNameExt}`));
+}

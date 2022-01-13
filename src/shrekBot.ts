@@ -3,7 +3,7 @@ import { config } from "dotenv";
 config();
 
 /* External imports */
-import { Client, Intents, Message, Collection, Guild } from "discord.js";
+import { Client, Intents, Message, Collection, Guild, Base } from "discord.js";
 import decache from "decache";
 
 import * as path from "path";
@@ -13,6 +13,7 @@ import * as fs from "fs";
 import { ResourceManager } from "./resourceManager";
 import { AudioPlayer } from "@discordjs/voice";
 import { ShrekLogger } from "./Helpers/logger";
+import { BaseCommand } from "./Helpers/baseCommand";
 
 
 /**
@@ -46,8 +47,7 @@ export class ShrekBot
    * Summary. Initialize this Shrek bot.
    *
    * @access  public
-   *
-   * @return {void}
+   * 
    */
   initialize()
   {
@@ -132,17 +132,26 @@ export class ShrekBot
     {
       const FilePath = `${FullPath}/${File}`;
       decache(FilePath);
-      import(FilePath).then((_fileCommand) =>
-      {
-        let CommandTriggers: string[] = _fileCommand.Triggers;
-
-        for (const Trigger of CommandTriggers)
+      import(FilePath)
+        .then((_baseCmdInterface) =>
         {
-          this.m_commands.set(Trigger.toLocaleLowerCase(), _fileCommand.run);
-        }
+          try
+          {
+            const FixedCommand: BaseCommand = _baseCmdInterface.createCommand();
+            const CommandTriggers: string[] = FixedCommand.Triggers;
+            const FileNoExt = File.split(".")[0];
+            for (const Trigger of CommandTriggers)
+            {
+              this.m_commands.set(Trigger.toLocaleLowerCase(), FixedCommand);
+            }
 
-        console.log(`Loaded [${File}] file as command`);
-      });
+            console.log(`Loaded [${FileNoExt}] file as command`);
+          }
+          catch (_error)
+          {
+            console.error(`The Command in [${File}]  does not implement BaseCommand properly.`);
+          }
+        });
     }
   }
 
@@ -332,8 +341,7 @@ export class ShrekBot
    * @member   {Discord.Collection<string, (_client: ShrekBot, _message: Message, _args: string[])=>{}>} Commands
    * @memberof shrekBot
    */
-  private m_commands: Collection<string, (_client: ShrekBot, _message: Message, _args: string[]) => {}>;
-
+  private m_commands: Collection<string, BaseCommand>;
 
   private m_Players: Collection<string, AudioPlayer>;
 
