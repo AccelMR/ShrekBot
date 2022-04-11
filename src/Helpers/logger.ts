@@ -69,11 +69,13 @@ export class ShrekLogger
     {
         const MessageSingleLine = this.m_log.join("\n") + "\n";
 
-        if(!fs.existsSync(this.m_loggerPath)) {
-            const LoggetPath = fs.createWriteStream(this.m_loggerPath);
-            LoggetPath.close();
+        try
+        {
+            fs.appendFileSync(this.m_loggerPath, MessageSingleLine);
+        } catch (err)
+        {
+            console.error(err);
         }
-        fs.appendFileSync(this.m_loggerPath, MessageSingleLine);
 
         //clear the logger
         this.m_log = [];
@@ -117,7 +119,7 @@ export class ShrekLogger
 
     private m_log: string[] = [];
 
-    private m_timesToSave: number = 10;
+    private m_timesToSave: number = 20;
 
     private m_loggerPath: string;
 }
