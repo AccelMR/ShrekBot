@@ -38,6 +38,7 @@ export function getMemberByUserOrNickName(
   const Members = _guild.members.cache;
   let Member: GuildMember | undefined = undefined;
   const FixedUserOrNick = _UsrNickOrID.toLocaleLowerCase();
+  
 
   if (!_client)
   {
@@ -47,16 +48,14 @@ export function getMemberByUserOrNickName(
     );
   }
 
-  const NicksData: Record<string, any> = _client.ResMng.getJSON("nicks");
+  let MemberID: string = _UsrNickOrID;
 
-  let MemberID: string = "";
-  if (!NicksData || !(_UsrNickOrID in NicksData))
+  const NicksData: Record<string, any> = _client.ResMng.getJSON("nicks");
+  if (NicksData && MemberID in NicksData)
   {
-    _client.errorIntoGuildFile(_guild.id, `${_UsrNickOrID} was bot found in the Nick json.`);
-    return undefined;
+    MemberID = NicksData[_UsrNickOrID];
   }
 
-  MemberID = NicksData[_UsrNickOrID];
   return Member = Members.find(
     (member) => member.user.id === MemberID
   );

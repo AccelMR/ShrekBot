@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import { BaseCommand, ParameterDetails } from "../Helpers/baseCommand";
 import { downloadFromURL } from "../Helpers/helpers";
 import { ShrekBot } from "../shrekBot";
@@ -13,8 +13,8 @@ export class DownloadSoundCommand implements BaseCommand
      * Descriptor members.
      */
     Triggers: string[] = ["downloadSound", "getsound", "dsound"];
-    Summary: string = `Downloads a sound in the previous message. If no sound found then it does not download anything.`;
-    Description: string = `Downloads a sound in the previous message. If no sound found then it does not download anything.\
+    Summary: string = `Downloads a sound in the current message. If no sound found then it does not download anything.`;
+    Description: string = `Downloads a sound in the current message. If no sound found then it does not download anything.\
         Sound has to have the next attributes: 3 seconds max and mp3 extension`;
     Params: ParameterDetails[] = [
         {
@@ -57,7 +57,10 @@ export class DownloadSoundCommand implements BaseCommand
             return;
         }
 
-        downloadFromURL(Attachment.url, Attachment.name ?? "NoName.mp3");
+        const AttachmentName = Attachment.name ?? "NoName.mp3";
+        downloadFromURL(Attachment.url, AttachmentName);
+
+        TexChannel.send(`${AttachmentName} has been downloaded. See help addsound command if you want to use this sound.`); //TODO: dynamic
     }
 }
 

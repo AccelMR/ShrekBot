@@ -5,7 +5,7 @@
  */
 
 /* External imports */
-import Discord from "discord.js";
+import Discord, { TextChannel } from "discord.js";
 import fs from "fs";
 import { BaseCommand, ParameterDetails } from "../Helpers/baseCommand";
 import { checkParamLenght } from "../Helpers/discordHelper";
@@ -68,7 +68,7 @@ export class AddNickCommand implements BaseCommand
     }
 
     //Delete this command
-    _message.delete();
+    //_message.delete();
 
     let NicksData = ResourceMngr.getJSON("nicks");
     //Nicks only can be saved with lower case
@@ -94,16 +94,17 @@ export class AddNickCommand implements BaseCommand
 
     //Adds it to the nick data and also writes it to the data file
     NicksData[Nick] = UserID;
-    fs.writeFile(
+    fs.writeFileSync(
       `${process.env.JSON_PATH}nicks.json`,
-      JSON.stringify(NicksData),
-      function writeJSON(_err)
-      {
-        if (_err) return console.error(_err);
-      }
+      JSON.stringify(NicksData)
     );
-
+    
+    ResourceMngr.loadResourceManagerData();
     _client.logIntoGuildFile(GuildID, `${UserID} has new Nick ${Nick}`);
+
+    Channel.send( `\`\`\`${UserID} has new Nick ${Nick}\`\`\``);
+    
+    _client.triggerCommand(`getnick`, _message, [UserID]);
   }
 
 }

@@ -6,7 +6,7 @@
 
 /* External imports */
 import Discord from "discord.js";
-import { createAudioPlayer, joinVoiceChannel } from "@discordjs/voice";
+import { createAudioPlayer, DiscordGatewayAdapterCreator, joinVoiceChannel } from "@discordjs/voice";
 import { checkParamLenght, getChannelByName } from "../Helpers/discordHelper";
 
 /** Own modules  */
@@ -75,7 +75,7 @@ export class JoinCommand implements BaseCommand
     const Connection = joinVoiceChannel({
       channelId: VoiceChannelID,
       guildId: GuildID,
-      adapterCreator: Guild.voiceAdapterCreator
+      adapterCreator: Guild.voiceAdapterCreator as DiscordGatewayAdapterCreator
     });
 
     //Register this player

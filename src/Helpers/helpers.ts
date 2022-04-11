@@ -104,7 +104,8 @@ export function soundExist(_soundName: string): boolean
 
 export function downloadFromURL(_url: string, _fileNameExt: string)
 {
-  request.get(_url)
+  request
+    .get(_url)
     .on('error', console.error)
     .pipe(fs.createWriteStream(`${process.env.SOUND_LOCAL_PATH}${_fileNameExt}`));
 }

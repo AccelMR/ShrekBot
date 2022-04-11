@@ -156,6 +156,35 @@ export class ShrekBot
   }
 
   /**
+   * Runs a command if it is found in the collection of commands. 
+   * NOTE: See _message parameter documentation. 
+   * 
+   * @param _commandName The name of the command to be triggered. 
+   * @param _message message command. 
+   * 
+   * NOTE: this message is needed for avery command to run, if you want to trigger
+   * a command it has to be triggered from another command, send the same message received as paramater in the first command.
+   * 
+   * @param _args All the args needed for this command to run
+   */
+  triggerCommand(_commandName: string, _message: Message<boolean>, _args: string[])
+  {
+    const Command = this.Commands.get(_commandName);
+    if(!Command)
+    {
+      console.log(`There is no ${_commandName} in the command list.`);
+      return;
+    }
+
+    try{
+      Command.run(this, _message, _args);
+    }
+    catch(_err){
+      console.error(`Error reported trying to execute command "${_commandName}", ${_err}`);
+    }
+  }
+
+  /**
    * Summary. Adds a Player to given Guild, if a Player already exists then it'll override it.
    * 
    * @param _guildID {string} Guild ID where to save the Player.

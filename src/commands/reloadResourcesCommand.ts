@@ -20,7 +20,7 @@ export class ReloadResourcesCommand implements BaseCommand
   /**
    * Descriptor members.
    */
-  Triggers: string[] = [`reloadresources`, `revent`];
+  Triggers: string[] = [`reloadresources`, `reloadjson`];
   Summary: string = `Reload all resources.`;
   Description: string = `Reload all resources in resource foldeer. Must be json.`;
   Params: ParameterDetails[] = [];

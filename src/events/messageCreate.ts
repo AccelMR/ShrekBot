@@ -1,5 +1,7 @@
 /* External imports */
 import Discord from "discord.js";
+import { playSoundFromFile } from "../Helpers/discordHelper";
+import { soundExist } from "../Helpers/helpers";
 
 /** Own Modules */
 import { ShrekBot } from "../shrekBot";
@@ -18,9 +20,25 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   // Ignore all bots
   if (_message.author.bot) return;
 
+  // if(_message.author.username === "Virato")
+  // {
+  //   _message.delete();
+  // }
+
   /* *********************************************************************** */
   /*                              Commands                            
   /* *********************************************************************** */
+
+  const Mentions = _message.mentions.users;
+  const BotUserID = _client.Bot.user?.id;
+  if(!BotUserID || Mentions.has(BotUserID))
+  {
+    const BotSound = "noEsteChflando";
+    if(soundExist(BotSound))
+    {
+      playSoundFromFile(_client,`${process.env.SOUND_LOCAL_PATH}${BotSound}.mp3`, GuildID);
+    }
+  }
 
   // Ignore messages not starting with the prefix (in config.json)
   if (_message.content.indexOf(Config.Prefix) !== 0 || _message.content === Config.Prefix) return;
@@ -39,6 +57,7 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   for (let i = 0; i < Args.length; i++) {
     Args[i] = Args[i].toString().replace(/"/g, "");
   }
+  
 
   //Take the [0] arg which is the actual command
   const CommandName = Args.shift()?.toLocaleLowerCase();
@@ -50,8 +69,8 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   // If that command doesn't exist, silently exit and do nothing
   if (!Command) {
     _client.logIntoGuildFile(GuildID, `Command ${CommandName} not found.`);
-    _message.delete();
-    return;
+    //_message.delete();
+    return;                   
   }
 
   // Try To run command

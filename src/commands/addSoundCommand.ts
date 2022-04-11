@@ -112,13 +112,9 @@ export class AddSoundCommand implements BaseCommand
     SoundData[UserID][GuildIDToAdd] = SoundName;
 
     //Save to the file async.
-    fs.writeFile(
+    fs.writeFileSync(
       `${process.env.JSON_PATH}sounds.json`,
-      JSON.stringify(SoundData),
-      function writeJSON(_err)
-      {
-        if (_err) return console.error(_err);
-      }
+      JSON.stringify(SoundData)
     );
 
     const GuildStr = GuildIDToAdd === GuildID ? Guild.name : GuildIDToAdd;
