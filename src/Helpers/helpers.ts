@@ -98,7 +98,8 @@ Number.prototype.clamp = function (min: number, max: number): number
  */
 export function soundExist(_soundName: string): boolean
 {
-  const Path = `${process.env.SOUND_LOCAL_PATH}${_soundName}.mp3`;
+  const Ext = _soundName.endsWith(`.mp3`) ? "" : ".mp3";  
+  const Path = `${process.env.SOUND_LOCAL_PATH}${_soundName}${Ext}`;
   return fs.existsSync(Path);
 }
 

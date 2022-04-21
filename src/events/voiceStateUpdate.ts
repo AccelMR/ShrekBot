@@ -11,6 +11,8 @@ import { BaseGuildVoiceChannel, VoiceState } from "discord.js";
 import { ShrekBot } from "../shrekBot";
 import { createAudioPlayer, DiscordGatewayAdapterCreator, getVoiceConnection, joinVoiceChannel } from "@discordjs/voice";
 import { playSoundFromFile } from "../Helpers/discordHelper";
+import { fstat } from "fs";
+import { soundExist } from "../Helpers/helpers";
 /**
  * Summary. Event when voice State changes.
  *
@@ -114,6 +116,11 @@ export function event(
 
         const Sound = SoundsData[UserID][GuildID] ?? SoundsData[UserID].default;
         const AudioPath = `${process.env.SOUND_LOCAL_PATH}${Sound}.mp3`;
+        if(!soundExist(AudioPath))
+        {
+          _client.errorIntoGuildFile(GuildID, `That sound does not exist in the context.`);
+          return;
+        }
         playSoundFromFile(_client, AudioPath, GuildID);
       }
     });

@@ -19,7 +19,7 @@ export class ShrekLogger
     {
         this.m_loggerName = _loggerName;
 
-        this.m_loggerPath = `${process.env.LOGGER_PATH}${this.m_loggerName}_${getFormatDate()}.txt`;
+        this.m_loggerPath = __dirname + `${process.env.LOGGER_PATH}${this.m_loggerName}_${getFormatDate()}.txt`;
     }
 
     log(_message: string)
@@ -71,7 +71,8 @@ export class ShrekLogger
 
         try
         {
-            fs.appendFileSync(this.m_loggerPath, MessageSingleLine);
+            fs.appendFileSync(this.m_loggerPath, MessageSingleLine,
+                { encoding: "utf8", flag: "w"});
         } catch (err)
         {
             console.error(err);
@@ -119,7 +120,7 @@ export class ShrekLogger
 
     private m_log: string[] = [];
 
-    private m_timesToSave: number = 20;
+    private m_timesToSave: number = 3;
 
     private m_loggerPath: string;
 }
