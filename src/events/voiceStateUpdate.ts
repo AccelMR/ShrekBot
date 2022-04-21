@@ -75,6 +75,32 @@ export function event(
 
   let AudioConnection = getVoiceConnection(GuildID);
   const VoiceChannelID = _new.channel.id;
+
+  const PlaySound = () => {
+    const ResoruceMngr = _client.ResMng;
+    const SoundsData = ResoruceMngr.getJSON("sounds");
+    if (!SoundsData)
+    {
+      _client.errorIntoGuildFile(GuildID, "Sound Data could not be found.");
+      return;
+    }
+
+    if (!SoundsData[UserID])
+    {
+      _client.warningIntoGuildFile(GuildID, `There is no sound for ${UserName}.`);
+      return;
+    }
+
+    const Sound = SoundsData[UserID][GuildID] ?? SoundsData[UserID].default;
+    if(!soundExist(Sound))
+    {
+      _client.errorIntoGuildFile(GuildID, `${Sound} does not exist in Sounds folder`);
+      return;
+    }
+    const AudioPath = `${process.env.SOUND_LOCAL_PATH}${Sound}.mp3`;
+    playSoundFromFile(_client, AudioPath, GuildID);
+  }
+
   //If Connection does not exist then Bot joins the channel.
   if (!AudioConnection)
   {
@@ -91,6 +117,7 @@ export function event(
     AudioConnection.subscribe(Player);
 
     _client.logIntoGuildFile(GuildID, `Created Player for "${Guild.name}" in voiceStateUpdate event.`);
+    PlaySound();
     return;
   }
 
@@ -100,28 +127,7 @@ export function event(
       const VoiceChannel = _channel as BaseGuildVoiceChannel;
       if (VoiceChannel.members.has(BotID))
       {
-        const ResoruceMngr = _client.ResMng;
-        const SoundsData = ResoruceMngr.getJSON("sounds");
-        if (!SoundsData)
-        {
-          _client.errorIntoGuildFile(GuildID, "Sound Data could not be found.");
-          return;
-        }
-
-        if (!SoundsData[UserID])
-        {
-          _client.warningIntoGuildFile(GuildID, `There is no sound for ${UserName}.`);
-          return;
-        }
-
-        const Sound = SoundsData[UserID][GuildID] ?? SoundsData[UserID].default;
-        if(!soundExist(Sound))
-        {
-          _client.errorIntoGuildFile(GuildID, `${Sound} does not exist in Sounds folder`);
-          return;
-        }
-        const AudioPath = `${process.env.SOUND_LOCAL_PATH}${Sound}.mp3`;
-        playSoundFromFile(_client, AudioPath, GuildID);
+        PlaySound();
       }
     });
 }
