@@ -19,7 +19,7 @@ export class ShrekLogger
     {
         this.m_loggerName = _loggerName;
 
-        this.m_loggerPath = __dirname + `${process.env.LOGGER_PATH}${this.m_loggerName}_${getFormatDate()}.txt`;
+        this.m_loggerPath = `${process.env.LOGGER_PATH}${this.m_loggerName}_${getFormatDate()}.txt`;
     }
 
     log(_message: string)
