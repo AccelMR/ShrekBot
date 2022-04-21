@@ -115,12 +115,12 @@ export function event(
         }
 
         const Sound = SoundsData[UserID][GuildID] ?? SoundsData[UserID].default;
-        const AudioPath = `${process.env.SOUND_LOCAL_PATH}${Sound}.mp3`;
-        if(!soundExist(AudioPath))
+        if(!soundExist(Sound))
         {
-          _client.errorIntoGuildFile(GuildID, `That sound does not exist in the context.`);
+          _client.errorIntoGuildFile(GuildID, `${Sound} does not exist in Sounds folder`);
           return;
         }
+        const AudioPath = `${process.env.SOUND_LOCAL_PATH}${Sound}.mp3`;
         playSoundFromFile(_client, AudioPath, GuildID);
       }
     });
