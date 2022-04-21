@@ -25,40 +25,40 @@ export class ShrekLogger
 
     log(_message: string)
     {
-        // this._internalLog(_message, LogType.INFO);
+        this._internalLog(_message, LogType.INFO);
 
-        // if (this.m_debugMode)
-        // {
+        if (this.m_debugMode)
+        {
             const DateStyle = "color: #FFFFFF";
             const DateInfo = `${getFormatTime()}\tINFO`;
             console.log(`%c[${DateInfo}]`, DateStyle, _message);
-        //}
+        }
 
     }
 
 
     error(_message: string)
     {
-        // this._internalLog(_message, LogType.ERROR);
+        this._internalLog(_message, LogType.ERROR);
 
-        // if (this.m_debugMode)
-        // {
+        if (this.m_debugMode)
+        {
             const DateStyle = "color: #FF0000";
             const DateInfo = `${getFormatTime()}\tERROR`;
             console.error(`%c[${DateInfo}]`, DateStyle, _message);
-        //}
+        }
     }
 
     warning(_message: string)
     {
-        // this._internalLog(_message, LogType.WARNING);
+        this._internalLog(_message, LogType.WARNING);
 
-        // if (this.m_debugMode)
-        // {
+        if (this.m_debugMode)
+        {
             const DateStyle = "color: #FFFF00";
             const DateInfo = `${getFormatTime()}\tWARNING`;
             console.warn(`%c[${DateInfo}]`, DateStyle, _message);
-        //}
+        }
     }
 
 
@@ -82,6 +82,18 @@ export class ShrekLogger
         this.m_log = [];
     }
 
+    getLastLogs(_num: number): string[]
+    {
+        const IndexNum = _num - 1;
+        if( IndexNum >= this.m_log.length)
+        {
+            return this.m_log;
+        }
+
+        const ret = this.m_log.slice(-_num);
+        return ret;
+    }
+
     /**
      * Summary. Internal log.
      * 
@@ -96,9 +108,10 @@ export class ShrekLogger
         this.m_log.push(FixedMessage);
 
         //Every 10 loggs we write it to the file and clear the array to keep low memory.
-        if (this.m_log.length === this.m_timesToSave)
+        if (this.m_log.length === 100)
         {
-            this.forceSave();
+            //this.forceSave();
+            this.m_log = [];
         }
     }
 
