@@ -20,7 +20,7 @@ export class ShrekLogger
     {
         this.m_loggerName = _loggerName;
 
-        this.m_loggerPath = path.resolve(__dirname, `../../Logs/${this.m_loggerName}_${getFormatDate()}.txt`);
+        this.m_loggerPath = path.resolve(__dirname, `../../../Logs/${this.m_loggerName}_${getFormatDate()}.txt`);
         console.log()
         
     }
