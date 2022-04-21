@@ -1,5 +1,6 @@
 import { getFormatDate, getFormatTime } from "./helpers";
 import * as fs from "fs";
+import path from "path"
 
 enum LogType
 {
@@ -19,7 +20,9 @@ export class ShrekLogger
     {
         this.m_loggerName = _loggerName;
 
-        this.m_loggerPath = `${process.env.LOGGER_PATH}${this.m_loggerName}_${getFormatDate()}.txt`;
+        this.m_loggerPath = path.resolve(__dirname, `../../Logs/${this.m_loggerName}_${getFormatDate()}.txt`);
+        console.log()
+        
     }
 
     log(_message: string)
