@@ -238,10 +238,10 @@ export class ShrekBot
    */
   logIntoGuildFile(_guildID: string, _message: string)
   {
-    // const Logger = this.m_loggers.get(_guildID);
-    // if (!Logger) { return; }
+    const Logger = this.m_loggers.get(_guildID);
+    if (!Logger) { return; }
 
-    // Logger.log(_message);
+    Logger.log(_message);
   }
 
   /**
@@ -253,10 +253,10 @@ export class ShrekBot
    */
   errorIntoGuildFile(_guildID: string, _message: string)
   {
-    // const Logger = this.m_loggers.get(_guildID);
-    // if (!Logger) { return; }
+    const Logger = this.m_loggers.get(_guildID);
+    if (!Logger) { return; }
 
-    // Logger.error(_message);
+    Logger.error(_message);
   }
 
   /**
@@ -268,10 +268,10 @@ export class ShrekBot
    */
   warningIntoGuildFile(_guildID: string, _message: string)
   {
-    // const Logger = this.m_loggers.get(_guildID);
-    // if (!Logger) { return; }
+    const Logger = this.m_loggers.get(_guildID);
+    if (!Logger) { return; }
 
-    // Logger.warning(_message);
+    Logger.warning(_message);
   }
 
   /**

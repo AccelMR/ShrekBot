@@ -25,40 +25,40 @@ export class ShrekLogger
 
     log(_message: string)
     {
-        this._internalLog(_message, LogType.INFO);
+        // this._internalLog(_message, LogType.INFO);
 
-        if (this.m_debugMode)
-        {
+        // if (this.m_debugMode)
+        // {
             const DateStyle = "color: #FFFFFF";
             const DateInfo = `${getFormatTime()}\tINFO`;
             console.log(`%c[${DateInfo}]`, DateStyle, _message);
-        }
+        //}
 
     }
 
 
     error(_message: string)
     {
-        this._internalLog(_message, LogType.ERROR);
+        // this._internalLog(_message, LogType.ERROR);
 
-        if (this.m_debugMode)
-        {
+        // if (this.m_debugMode)
+        // {
             const DateStyle = "color: #FF0000";
             const DateInfo = `${getFormatTime()}\tERROR`;
             console.error(`%c[${DateInfo}]`, DateStyle, _message);
-        }
+        //}
     }
 
     warning(_message: string)
     {
-        this._internalLog(_message, LogType.WARNING);
+        // this._internalLog(_message, LogType.WARNING);
 
-        if (this.m_debugMode)
-        {
+        // if (this.m_debugMode)
+        // {
             const DateStyle = "color: #FFFF00";
             const DateInfo = `${getFormatTime()}\tWARNING`;
             console.warn(`%c[${DateInfo}]`, DateStyle, _message);
-        }
+        //}
     }
 
 
