@@ -134,6 +134,13 @@ export function event(
 
 function checkStates(_new: VoiceState, _old: VoiceState): boolean
 {
+  if (_old.selfMute && _new.serverMute || _new.selfMute && _old.serverMute) { return false; }
+  if (_old.selfDeaf && _new.serverDeaf || _new.selfDeaf && _old.serverDeaf) { return false; }
+
+  //Me cagas Benga
+  if (_old.selfMute && _new.serverDeaf || _new.selfMute && _old.selfDeaf) { return false; }
+  if (_old.selfDeaf && _new.serverMute || _new.selfDeaf && _old.serverMute) { return false; }
+  
   if (_old.mute && !_new.mute || !_old.mute && _new.mute) { return false; }
   if (_old.deaf && !_new.deaf || !_old.deaf && _new.deaf) { return false; }
   if (_old.streaming && !_new.streaming || !_old.streaming && _new.streaming) { return false; }

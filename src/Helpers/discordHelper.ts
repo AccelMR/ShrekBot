@@ -131,7 +131,7 @@ export function playSoundFromFile(
 
   _client.logIntoGuildFile(_guildID, `Playing sound from "${_soundPath}"`);
 
-  Player?.play(AudioResource);
+  Player?.play(AudioResource,);
   return true;
 }
 

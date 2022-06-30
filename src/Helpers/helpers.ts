@@ -100,6 +100,7 @@ export function soundExist(_soundName: string): boolean
 {
   const Ext = _soundName.endsWith(`.mp3`) ? "" : ".mp3";  
   const Path = `${process.env.SOUND_LOCAL_PATH}${_soundName}${Ext}`;
+  console.log("------------------->" + Path);
   return fs.existsSync(Path);
 }
 

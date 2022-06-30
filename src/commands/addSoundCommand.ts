@@ -89,16 +89,19 @@ export class AddSoundCommand implements BaseCommand
       _client.errorIntoGuildFile(GuildID, `${UserName} tried to add ${_args[0]} but was not found in any DB.`);
       return;
     }
-
-    //Get the userID
-    const UserID = MemberToAddSound.user.id;
-    const GuildIDToAdd = _args[2] ?? GuildID;
-
+    
     //If This person has no field yet, it creates it
     if (!(UserID in SoundData))
     {
       SoundData[UserID] = {};
     }
+
+    const UserObj = SoundData[UserID];
+    let Args = !(Default in UserObj) ? Default : _args[2];
+
+    //Get the userID
+    const UserID = MemberToAddSound.user.id;
+    const GuildIDToAdd = Args ?? GuildID;
 
     //Get the sound Name
     const SoundName = _args[1];
@@ -109,7 +112,7 @@ export class AddSoundCommand implements BaseCommand
       return;
     }
 
-    SoundData[UserID][GuildIDToAdd] = SoundName;
+    UserObj[GuildIDToAdd] = SoundName;
 
     //Save to the file async.
     fs.writeFileSync(
