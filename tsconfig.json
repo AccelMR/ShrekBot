@@ -71,5 +71,5 @@
     //"resolveJsonModule": true
   },
   "exclude": ["node_modules"],
-  "include": ["resources/json/*.json", "src/**/*"]
+  "include": ["resources/json/*.json", "src/**/*", "main.ts"]
 }

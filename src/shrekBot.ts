@@ -1,12 +1,12 @@
-//call and initialize env variables
-import { config } from "dotenv";
-config();
-
 /* External imports */
-import { Client, Intents, Message, Collection, Guild, Base } from "discord.js";
+//call and initialize env variables
+import * as path from "path";
+import { config } from "dotenv";
+config({ path: path.resolve(__dirname, "../.env") });
+
+import { Client, Intents, Message, Collection, Guild, GuildMember } from "discord.js";
 import decache from "decache";
 
-import * as path from "path";
 import * as fs from "fs";
 
 /** Internal imports */
@@ -71,6 +71,7 @@ export class ShrekBot
     this.loadCommands();
 
     //Client login
+    console.log(`TOKEN: ${process.env.TOKEN}`);
     this.m_bot.login(process.env.TOKEN);
   }
 
@@ -150,6 +151,7 @@ export class ShrekBot
           catch (_error)
           {
             console.error(`The Command in [${File}]  does not implement BaseCommand properly.`);
+            this.Owner?.send(`The Command in [${File}]  does not implement BaseCommand properly.`);
           }
         });
     }
@@ -181,6 +183,7 @@ export class ShrekBot
     }
     catch(_err){
       console.error(`Error reported trying to execute command "${_commandName}", ${_err}`);
+      this.Owner?.send(`Error reported trying to execute command "${_commandName}", ${_err}`);
     }
   }
 
@@ -344,6 +347,15 @@ export class ShrekBot
     return this.m_resourceManager;
   }
 
+
+  set Owner(_owner: GuildMember | undefined) {
+    this.m_Owner = _owner; 
+  }
+
+  get Owner(): GuildMember | undefined{
+    return this.m_Owner;
+  }
+
   /* *********************************************************************** */
   /*                              Properties                            
   /* *********************************************************************** */
@@ -375,5 +387,7 @@ export class ShrekBot
   private m_Players: Collection<string, AudioPlayer>;
 
   private m_loggers: Map<string, ShrekLogger>;
+
+  private m_Owner?: GuildMember;
 
 }

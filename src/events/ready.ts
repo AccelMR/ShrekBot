@@ -1,5 +1,5 @@
 /* External imports */
-import Discord from "discord.js";
+import { Client } from "discord.js";
 
 /** Own Modules */
 import { ShrekBot } from "../shrekBot";
@@ -15,8 +15,14 @@ import { ShrekBot } from "../shrekBot";
  *
  * @return {void}
  */
-export const event = (_client: ShrekBot, _message: Discord.Message) => {
+export const event = (_client: ShrekBot, bot: Client) => {
   console.log("Shrek bot is ready!");
+
+  const Accel = bot.guilds.cache.at(0)?.members.cache.get(process.env.OWNER_ID ?? "");
+  if(Accel){
+    _client.Owner = Accel;
+    Accel.send(`Starting Bot...`);
+  }
 
   _client._onBotReady();
 };

@@ -1,4 +1,4 @@
-import { getFormatDate, getFormatTime } from "./helpers";
+import { getDateTimeFormat } from "./helpers";
 import * as fs from "fs";
 
 enum LogType
@@ -19,7 +19,7 @@ export class ShrekLogger
     {
         this.m_loggerName = _loggerName;
 
-        this.m_loggerPath = `${process.env.LOGGER_PATH}${this.m_loggerName}_${getFormatDate()}.txt`;
+        this.m_loggerPath = `${process.env.LOGGER_PATH}${this.m_loggerName}_${getDateTimeFormat()}.txt`;
         
     }
 
@@ -30,7 +30,7 @@ export class ShrekLogger
         if (this.m_debugMode)
         {
             const DateStyle = "color: #FFFFFF";
-            const DateInfo = `${getFormatTime()}\tINFO`;
+            const DateInfo = `${getDateTimeFormat()}\tINFO`;
             console.log(`%c[${DateInfo}]`, DateStyle, _message);
         }
 
@@ -44,7 +44,7 @@ export class ShrekLogger
         if (this.m_debugMode)
         {
             const DateStyle = "color: #FF0000";
-            const DateInfo = `${getFormatTime()}\tERROR`;
+            const DateInfo = `${getDateTimeFormat()}\tERROR`;
             console.error(`%c[${DateInfo}]`, DateStyle, _message);
         }
     }
@@ -56,7 +56,7 @@ export class ShrekLogger
         if (this.m_debugMode)
         {
             const DateStyle = "color: #FFFF00";
-            const DateInfo = `${getFormatTime()}\tWARNING`;
+            const DateInfo = `${getDateTimeFormat()}\tWARNING`;
             console.warn(`%c[${DateInfo}]`, DateStyle, _message);
         }
     }
@@ -102,7 +102,7 @@ export class ShrekLogger
     private _internalLog(_message: string, _type: LogType)
     {
         const TypeName = _type.toString();
-        const DateInfo = getFormatTime();
+        const DateInfo = getDateTimeFormat();
         const FixedMessage = `[${DateInfo}]\t[${TypeName}]\t${_message}`;
 
         this.m_log.push(FixedMessage);
@@ -129,7 +129,7 @@ export class ShrekLogger
 
     private m_loggerName: string;
 
-    private m_debugMode: boolean = true;
+    private m_debugMode: boolean = false;
 
     private m_log: string[] = [];
 

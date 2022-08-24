@@ -4,7 +4,8 @@ import
   Guild,
   GuildMember,
   GuildChannel,
-  ThreadChannel
+  ThreadChannel,
+  GuildBasedChannel
 } from "discord.js";
 import { getVoiceConnection, createAudioResource } from "@discordjs/voice";
 
@@ -44,7 +45,7 @@ export function getMemberByUserOrNickName(
   {
     //If no client it means there isn't a Nick DB so we look for the name as username or as id.
     return Members.find(
-      (member) => member.user.username.toLowerCase() === FixedUserOrNick || member.user.id.toLowerCase() === FixedUserOrNick
+      (member: GuildMember) => member.user.username.toLowerCase() === FixedUserOrNick || member.user.id.toLowerCase() === FixedUserOrNick
     );
   }
 
@@ -57,7 +58,7 @@ export function getMemberByUserOrNickName(
   }
 
   return Member = Members.find(
-    (member) => member.user.id === MemberID
+    (member: GuildMember) => member.user.id === MemberID
   );
 }
 
@@ -85,7 +86,7 @@ export function getChannelByName(
   {
     let GuildChannelManager = _guild.channels;
     FoundChannel = GuildChannelManager.cache.find(
-      (Channel) => Channel.name.toLowerCase() === _channelName
+      (Channel : GuildBasedChannel) => Channel.name.toLowerCase() === _channelName
     );
     if (FoundChannel === undefined)
     {
@@ -113,6 +114,7 @@ export function playSoundFromFile(
   const AudioConnection = getVoiceConnection(_guildID);
   if (!AudioConnection)
   {
+    console.error(`playSoundFromFile() was called but there is no VoiceConnection in Guild ${_guildID}`);
     _client.errorIntoGuildFile(_guildID, `playSoundFromFile() was called but there is no VoiceConnection in Guild ${_guildID}`);
     return false;
   }
@@ -120,6 +122,7 @@ export function playSoundFromFile(
   const Stats = lstatSync(_soundPath);
   if (!Stats.isFile())
   {
+    console.error(`The provided path "${_soundPath}" does not exist.`);
     _client.errorIntoGuildFile(_guildID, `The provided path "${_soundPath}" does not exist.`);
     return false;
   }

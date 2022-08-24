@@ -23,6 +23,13 @@ export class DownloadSoundCommand implements BaseCommand
             Optional: false,
             Default: "N/A",
             Description: "The actual sound attached to this message. If that attached file is not a mp3 it won't download it."
+        },
+        {
+            Name: "UserName",
+            Type: "string",
+            Optional: true,
+            Default: "N/A",
+            Description: "If this sound will be linked to a specific user."
         }
     ];
     Example: string = 'downloadSound | getsound | dsound';
@@ -58,9 +65,17 @@ export class DownloadSoundCommand implements BaseCommand
         }
 
         const AttachmentName = Attachment.name ?? "NoName.mp3";
-        downloadFromURL(Attachment.url, AttachmentName);
+        downloadFromURL(Attachment.url, AttachmentName, () => {
+            TexChannel.send(`${AttachmentName} has been downloaded. See help addsound command if you want to use this sound.`); //TODO: dynamic
 
-        TexChannel.send(`${AttachmentName} has been downloaded. See help addsound command if you want to use this sound.`); //TODO: dynamic
+            const UsrToAdd = _args[0];
+            if(UsrToAdd){
+                const GuildToAdd = _args[1] ?? GuildID;
+                _client.triggerCommand("addsound", _message, [UsrToAdd, AttachmentName, GuildToAdd]);
+            }
+        });
+
+
     }
 }
 

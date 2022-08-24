@@ -11,7 +11,6 @@ import { BaseGuildVoiceChannel, VoiceState } from "discord.js";
 import { ShrekBot } from "../shrekBot";
 import { createAudioPlayer, DiscordGatewayAdapterCreator, getVoiceConnection, joinVoiceChannel } from "@discordjs/voice";
 import { playSoundFromFile } from "../Helpers/discordHelper";
-import { fstat } from "fs";
 import { soundExist } from "../Helpers/helpers";
 /**
  * Summary. Event when voice State changes.
@@ -122,7 +121,7 @@ export function event(
   }
 
   Bot.channels.fetch(VoiceChannelID)
-    .then(_channel => 
+    .then((_channel: any) => 
     {
       const VoiceChannel = _channel as BaseGuildVoiceChannel;
       if (VoiceChannel.members.has(BotID))

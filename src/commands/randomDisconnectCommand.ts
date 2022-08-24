@@ -75,8 +75,10 @@ export class RondomDisconnectCommand implements BaseCommand
 
     _client.logIntoGuildFile(GuildID, `${userName} has randomly disconnected ${toDisconnect.user.username}`);
 
-    //Delete this command
-    _message.delete();
+    const NoDelete = _args[0];
+    if(NoDelete !== "nodelete"){
+        _message.delete();
+    }
   }
 }
 

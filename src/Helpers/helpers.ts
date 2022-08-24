@@ -1,6 +1,11 @@
 import * as fs from "fs";
 import * as request from "request";
 
+function zeroPad(nr: Number, base: Number){
+  var  len = (String(base).length - String(nr).length)+1;
+  return len > 0? new Array(len).join('0')+nr : nr;
+}
+
 /**
  * Summary. Gives Time as [day-month-year_hours:minutes].
  *
@@ -8,52 +13,56 @@ import * as request from "request";
  *
  * @return {string} Returns the current time formatted
  */
-export function getFormatTime(): string
+export function getDateTimeFormat(): string
 {
-  const date_ob = new Date();
-  // current date
-  // adjust 0 before single digit date
-  const day = ("0" + date_ob.getDate()).slice(-2);
 
-  // current month
-  const month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-
-  // current year
-  const year = date_ob.getFullYear();
-
-  // current hours
-  const hours = date_ob.getHours();
-
-  // current minutes
-  const minutes = date_ob.getMinutes();
-
-  const seconds = date_ob.getSeconds();
-
-  const FixedSec = (seconds / 10 < 0) ? `0${seconds}` : seconds;
-
-  return (`${day}-${month}-${year}_${hours}:${minutes}:${FixedSec}`);
+  return (`${getDateFormat()}_${getTimeFormat()}`);
 }
 
 /**
- * Summary. Get the date as string.
- * 
- * @returns A Formatted date as day-month-year
+ * Summary. Gives Time as [day-month-year].
+ *
+ * @access  public
+ *
+ * @return {string} Returns the current time formatted
  */
-export function getFormatDate(): string
-{
-  const date_ob = new Date();
-  // current date
-  // adjust 0 before single digit date
-  const day = ("0" + date_ob.getDate()).slice(-2);
+ export function getDateFormat(): string
+ {
+   const date_ob = new Date();
+   // current date
+   // adjust 0 before single digit date
+   const day = ("0" + date_ob.getDate()).slice(-2);
+ 
+   // current month
+   const month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+ 
+   // current year
+   const year = date_ob.getFullYear();
+ 
+   return (`${day}-${month}-${year}`);
+ }
 
-  // current month
-  const month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+ /**
+ * Summary. Gives Time as [hours:minutes].
+ *
+ * @access  public
+ *
+ * @return {string} Returns the current time formatted
+ */
+  export function getTimeFormat(): string
+  {
+    const date_ob = new Date();
 
-  // current year
-  const year = date_ob.getFullYear();
+    // current hours
+    const hours = date_ob.getHours();
 
-  return (`${day}-${month}-${year}`);
-}
+    // current minutes
+    const minutes = zeroPad(date_ob.getMinutes(), 10);
+
+    const seconds = zeroPad(date_ob.getSeconds(), 10);
+
+    return (`${hours}:${minutes}:${seconds}`);
+  }
 
 // Checks if string can be converted to int if Nan is found then it'll return
 // a default value. Default = 0
@@ -100,14 +109,16 @@ export function soundExist(_soundName: string): boolean
 {
   const Ext = _soundName.endsWith(`.mp3`) ? "" : ".mp3";  
   const Path = `${process.env.SOUND_LOCAL_PATH}${_soundName}${Ext}`;
-  console.log("------------------->" + Path);
+  console.log("------------------->" + Path); 
   return fs.existsSync(Path);
 }
 
-export function downloadFromURL(_url: string, _fileNameExt: string)
+export function downloadFromURL(_url: string, _fileNameExt: string, _callback?: () => any)
 {
-  request
-    .get(_url)
-    .on('error', console.error)
-    .pipe(fs.createWriteStream(`${process.env.SOUND_LOCAL_PATH}${_fileNameExt}`));
+  const curr = request.get(_url);
+  curr.on('error', console.error)
+  curr.pipe(fs.createWriteStream(`${process.env.SOUND_LOCAL_PATH}${_fileNameExt.toLocaleLowerCase()}`));
+  if(_callback){
+    curr.on('end', _callback);
+  }
 }

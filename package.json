@@ -25,7 +25,7 @@
     "@types/giphy-api": "^2.0.3",
     "axios": "^0.21.1",
     "discord-api-types": "^0.26.1",
-    "discord.js": "^13.3.1",
+    "discord.js": "^13.8.1",
     "ffmpeg-static": "^4.4.0",
     "forever": "^4.0.3",
     "googleapis": "^39.2.0",

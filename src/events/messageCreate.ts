@@ -18,7 +18,7 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   const GuildID = Guild.id;
 
   // Ignore all bots
-  if (_message.author.bot) return;
+  //if (_message.author.bot) return;
 
   // if(_message.author.username === "Virato")
   // {
@@ -80,5 +80,6 @@ export const event = (_client: ShrekBot, _message: Discord.Message) => {
   }
   catch(_err){
     _client.errorIntoGuildFile(GuildID, `Error reported trying to execute command "${CommandName}", ${_err}`);
+    _client.Owner?.send(`Error reported trying to execute command "${CommandName}", ${_err}`);
   }
 };

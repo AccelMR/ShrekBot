@@ -90,6 +90,9 @@ export class AddSoundCommand implements BaseCommand
       return;
     }
     
+    //Get the userID
+    const UserID = MemberToAddSound.user.id;
+
     //If This person has no field yet, it creates it
     if (!(UserID in SoundData))
     {
@@ -98,9 +101,7 @@ export class AddSoundCommand implements BaseCommand
 
     const UserObj = SoundData[UserID];
     let Args = !(Default in UserObj) ? Default : _args[2];
-
-    //Get the userID
-    const UserID = MemberToAddSound.user.id;
+    
     const GuildIDToAdd = Args ?? GuildID;
 
     //Get the sound Name
@@ -112,7 +113,11 @@ export class AddSoundCommand implements BaseCommand
       return;
     }
 
-    UserObj[GuildIDToAdd] = SoundName;
+    if(SoundName.includes(".mp3")){
+      SoundName.replace(".mp3", '');
+    }
+
+    UserObj[GuildIDToAdd] = SoundName.toLocaleLowerCase();
 
     //Save to the file async.
     fs.writeFileSync(
@@ -122,6 +127,7 @@ export class AddSoundCommand implements BaseCommand
 
     const GuildStr = GuildIDToAdd === GuildID ? Guild.name : GuildIDToAdd;
     _client.logIntoGuildFile(GuildID, `Added ${SoundName}.mp3 to ${MemberToAddSound.user.username} in ${GuildStr}`);
+    TexChannel.send(`<@${UserID}> Tienes nuevo audio xd ${SoundName}`);
   }
 }
 
